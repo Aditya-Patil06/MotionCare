@@ -2,6 +2,7 @@
 // Main Application Entrypoint with Role-based Navigation & MultiProvider
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'auth/login_screen.dart';
 import 'core/theme.dart';
@@ -10,8 +11,11 @@ import 'patient/dashboard/patient_dashboard.dart';
 import 'services/auth/auth_service.dart';
 import 'services/firestore/firestore_service.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
   runApp(const PhysioApp());
 }
 
@@ -28,7 +32,7 @@ class PhysioApp extends StatelessWidget {
       child: MaterialApp(
         title: 'MotionCare',
         debugShowCheckedModeBanner: false,
-        theme: AppTheme.darkTheme,
+        theme: AppTheme.lightTheme,
         home: const AuthGate(),
       ),
     );

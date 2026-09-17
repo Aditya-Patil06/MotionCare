@@ -1,10 +1,11 @@
 // lib/auth/login_screen.dart
-// Specification v7 Section 10, 27, 28: Dedicated Role-based Login Screen
+// Visual Reference 1 (media_1789667766593.png) Implementation for MotionCare
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/constants.dart';
 import '../core/theme.dart';
+import '../core/widgets/motioncare_logo.dart';
 import '../models/user.dart';
 import '../services/auth/auth_service.dart';
 import '../services/firestore/firestore_service.dart';
@@ -68,110 +69,40 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final auth = context.watch<AuthService>();
     final firestore = context.watch<FirestoreService>();
-    final activePatientProfile = firestore.getHealthProfile(_selectedPatientId);
 
     return Scaffold(
+      backgroundColor: AppTheme.backgroundWhite,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+            padding: const EdgeInsets.symmetric(horizontal: 28.0, vertical: 24.0),
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 440),
+              constraints: const BoxConstraints(maxWidth: 400),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // App Branding Header
-                  Center(
-                    child: Container(
-                      width: 64,
-                      height: 64,
-                      decoration: BoxDecoration(
-                        color: AppTheme.surfaceBg,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppTheme.cardBorder,
-                          width: 1,
-                        ),
-                      ),
-                      child: const Icon(
-                        Icons.accessibility_new_rounded,
-                        size: 36,
-                        color: AppTheme.primaryTeal,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 14),
-                  const Text(
-                    'MotionCare',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w700,
-                      color: AppTheme.textLight,
-                      letterSpacing: -0.5,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    'AI-Assisted Physiotherapy Monitoring',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: AppTheme.textMuted,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 12),
 
-                  // Role Selection Segmented Control
+                  // 1. MotionCare Two-Tone Brand Logo & Tagline
+                  const Center(
+                    child: MotionCareLogo(
+                      fontSize: 34,
+                      showTagline: true,
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+
+                  // 2. Segmented Role Switcher Pill Container (Exact Image 1 reproduction)
                   Container(
                     decoration: BoxDecoration(
-                      color: AppTheme.surfaceBg,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppTheme.cardBorder, width: 1),
+                      color: AppTheme.inactiveTrack,
+                      borderRadius: BorderRadius.circular(24),
                     ),
-                    padding: const EdgeInsets.all(3),
+                    padding: const EdgeInsets.all(4),
                     child: Row(
                       children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () => _onRoleChanged(UserRole.doctor),
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              decoration: BoxDecoration(
-                                color: _selectedRole == UserRole.doctor
-                                    ? AppTheme.primaryTeal
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.medical_services_rounded,
-                                    size: 18,
-                                    color: _selectedRole == UserRole.doctor
-                                        ? AppTheme.darkBg
-                                        : AppTheme.textMuted,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    'Doctor',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
-                                      color: _selectedRole == UserRole.doctor
-                                        ? AppTheme.darkBg
-                                        : AppTheme.textMuted,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
+                        // Patient Tab (Left)
                         Expanded(
                           child: GestureDetector(
                             onTap: () => _onRoleChanged(UserRole.patient),
@@ -180,29 +111,69 @@ class _LoginScreenState extends State<LoginScreen> {
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               decoration: BoxDecoration(
                                 color: _selectedRole == UserRole.patient
-                                    ? AppTheme.primaryAccent
+                                    ? AppTheme.primaryGreen
                                     : Colors.transparent,
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(20),
                               ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(
-                                    Icons.person_rounded,
-                                    size: 18,
+                                    Icons.person,
+                                    size: 19,
                                     color: _selectedRole == UserRole.patient
-                                        ? AppTheme.darkBg
-                                        : AppTheme.textMuted,
+                                        ? Colors.white
+                                        : AppTheme.darkText,
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
                                     'Patient',
                                     style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 15,
                                       color: _selectedRole == UserRole.patient
-                                          ? AppTheme.darkBg
-                                          : AppTheme.textMuted,
+                                          ? Colors.white
+                                          : AppTheme.darkText,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        // Doctor Tab (Right)
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => _onRoleChanged(UserRole.doctor),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              decoration: BoxDecoration(
+                                color: _selectedRole == UserRole.doctor
+                                    ? AppTheme.primaryGreen
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.medical_services_outlined,
+                                    size: 18,
+                                    color: _selectedRole == UserRole.doctor
+                                        ? Colors.white
+                                        : AppTheme.darkText,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'Doctor',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 15,
+                                      color: _selectedRole == UserRole.doctor
+                                          ? Colors.white
+                                          : AppTheme.darkText,
                                     ),
                                   ),
                                 ],
@@ -213,95 +184,36 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 28),
 
-                  // Role Profile Information Card
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 22,
-                            backgroundColor: _selectedRole == UserRole.doctor
-                                ? AppTheme.primaryTeal.withOpacity(0.2)
-                                : AppTheme.primaryAccent.withOpacity(0.2),
-                            child: Icon(
-                              _selectedRole == UserRole.doctor
-                                  ? Icons.health_and_safety
-                                  : Icons.fitness_center,
-                              color: _selectedRole == UserRole.doctor
-                                  ? AppTheme.primaryTeal
-                                  : AppTheme.primaryAccent,
-                              size: 24,
-                            ),
-                          ),
-                          const SizedBox(width: 14),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  _selectedRole == UserRole.doctor
-                                      ? 'Dr. Sarah Chen, PT, DPT'
-                                      : (activePatientProfile?.patientName ?? 'Alex Rivera'),
-                                  style: const TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppTheme.textLight,
-                                  ),
-                                ),
-                                const SizedBox(height: 3),
-                                Text(
-                                  _selectedRole == UserRole.doctor
-                                      ? 'Physiotherapist • Prescribe & Review'
-                                      : 'Patient • ${activePatientProfile?.affectedBodyPart ?? "Active Care"}',
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: AppTheme.textMuted,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.06),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Text(
-                              _selectedRole == UserRole.doctor ? 'DOCTOR' : 'PATIENT',
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                color: _selectedRole == UserRole.doctor
-                                    ? AppTheme.primaryTeal
-                                    : AppTheme.primaryAccent,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                  // 3. "Welcome Back" Header
+                  const Text(
+                    'Welcome Back',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w800,
+                      color: AppTheme.darkText,
+                      letterSpacing: -0.4,
                     ),
                   ),
-
-                  if (_selectedRole == UserRole.patient) ...[
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Select Patient Account',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: AppTheme.textMuted,
-                        letterSpacing: 0.2,
-                      ),
+                  const SizedBox(height: 6),
+                  const Text(
+                    'Sign in to continue your recovery journey',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: AppTheme.textMuted,
                     ),
-                    const SizedBox(height: 8),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Patient Account Quick Selector (when Patient role is active)
+                  if (_selectedRole == UserRole.patient) ...[
                     Wrap(
                       spacing: 8,
                       runSpacing: 6,
+                      alignment: WrapAlignment.center,
                       children: firestore.allPatients.map((p) {
                         final isSelected = _selectedPatientId == p.patientId;
                         return ChoiceChip(
@@ -309,16 +221,16 @@ class _LoginScreenState extends State<LoginScreen> {
                             p.patientName,
                             style: TextStyle(
                               fontSize: 12,
-                              color: isSelected ? AppTheme.darkBg : AppTheme.textLight,
-                              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                              color: isSelected ? Colors.white : AppTheme.darkText,
                             ),
                           ),
                           selected: isSelected,
-                          selectedColor: AppTheme.primaryAccent,
-                          backgroundColor: AppTheme.surfaceBg,
-                          side: BorderSide(
-                            color: isSelected ? AppTheme.primaryAccent : AppTheme.cardBorder,
-                            width: 1,
+                          selectedColor: AppTheme.primaryGreen,
+                          backgroundColor: AppTheme.surfaceGray,
+                          side: BorderSide.none,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
                           ),
                           onSelected: (val) {
                             if (val) {
@@ -331,155 +243,275 @@ class _LoginScreenState extends State<LoginScreen> {
                         );
                       }).toList(),
                     ),
+                    const SizedBox(height: 16),
                   ],
-                  const SizedBox(height: 20),
 
-                  // Email Input Field
+                  // 4. Email Input Field
                   TextField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
-                    style: const TextStyle(fontSize: 14, color: AppTheme.textLight),
+                    style: const TextStyle(fontSize: 14, color: AppTheme.darkText),
                     decoration: InputDecoration(
-                      labelText: 'Account Email',
-                      labelStyle: const TextStyle(fontSize: 13, color: AppTheme.textMuted),
-                      prefixIcon: const Icon(Icons.alternate_email, size: 18, color: AppTheme.textMuted),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                      hintText: 'Email address',
+                      prefixIcon: const Icon(Icons.mail_outline_rounded, size: 20, color: AppTheme.textMuted),
+                      filled: true,
+                      fillColor: AppTheme.surfaceGray,
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppTheme.cardBorder),
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide.none,
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppTheme.cardBorder),
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide.none,
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppTheme.primaryTeal, width: 1.5),
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: const BorderSide(color: AppTheme.primaryGreen, width: 1.5),
                       ),
-                      filled: true,
-                      fillColor: AppTheme.surfaceBg,
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 14),
 
-                  // Password Input Field
+                  // 5. Password Input Field
                   TextField(
                     controller: _passwordController,
                     obscureText: _obscurePassword,
-                    style: const TextStyle(fontSize: 14, color: AppTheme.textLight),
+                    style: const TextStyle(fontSize: 14, color: AppTheme.darkText),
                     decoration: InputDecoration(
-                      labelText: 'Password',
-                      labelStyle: const TextStyle(fontSize: 13, color: AppTheme.textMuted),
-                      prefixIcon: const Icon(Icons.lock_outline, size: 18, color: AppTheme.textMuted),
+                      hintText: 'Password',
+                      prefixIcon: const Icon(Icons.lock_outline_rounded, size: 20, color: AppTheme.textMuted),
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                          size: 18,
+                          _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                          size: 20,
                           color: AppTheme.textMuted,
                         ),
                         onPressed: () {
                           setState(() => _obscurePassword = !_obscurePassword);
                         },
                       ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                      filled: true,
+                      fillColor: AppTheme.surfaceGray,
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppTheme.cardBorder),
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide.none,
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppTheme.cardBorder),
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide.none,
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppTheme.primaryTeal, width: 1.5),
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: const BorderSide(color: AppTheme.primaryGreen, width: 1.5),
                       ),
-                      filled: true,
-                      fillColor: AppTheme.surfaceBg,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  // 6. "Forgot password?" Link
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      onPressed: () {},
+                      child: const Text(
+                        'Forgot password?',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: AppTheme.primaryGreen,
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 20),
 
-                  // Sign In Button
+                  // 7. Primary Action Button: "Log In ->"
                   SizedBox(
-                    height: 48,
-                    child: ElevatedButton.icon(
-                      icon: auth.isLoading
-                          ? const SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: AppTheme.darkBg,
-                              ),
-                            )
-                          : Icon(
-                              _selectedRole == UserRole.doctor
-                                  ? Icons.medical_services_rounded
-                                  : Icons.login_rounded,
-                              size: 18,
-                              color: AppTheme.darkBg,
-                            ),
-                      label: Text(
-                        auth.isLoading
-                            ? 'Signing In...'
-                            : _selectedRole == UserRole.doctor
-                                ? 'Sign In to Doctor Dashboard'
-                                : 'Sign In to Patient Portal',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: AppTheme.darkBg,
-                          letterSpacing: 0.2,
-                        ),
-                      ),
+                    height: 52,
+                    child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: _selectedRole == UserRole.doctor
-                            ? AppTheme.primaryTeal
-                            : AppTheme.primaryAccent,
+                        backgroundColor: AppTheme.primaryGreen,
+                        foregroundColor: Colors.white,
                         elevation: 0,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(28),
                         ),
                       ),
                       onPressed: auth.isLoading ? null : _handleSignIn,
+                      child: auth.isLoading
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Flexible(
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Text(
+                                      _selectedRole == UserRole.doctor
+                                          ? 'Sign In to Doctor Dashboard'
+                                          : 'Sign In to Patient Portal',
+                                      style: const TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.white,
+                                        letterSpacing: 0.2,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 20),
+                              ],
+                            ),
                     ),
                   ),
                   const SizedBox(height: 24),
 
-                  // Section 1 Mandatory Clinical Boundary Disclaimer
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: AppTheme.surfaceBg,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: AppTheme.cardBorder),
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Icon(
-                          Icons.shield_outlined,
-                          size: 15,
-                          color: AppTheme.primaryTeal,
-                        ),
-                        const SizedBox(width: 8),
-                        const Expanded(
-                          child: Text(
-                            AppConstants.clinicalScopeBoundaryStatement,
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: AppTheme.textMuted,
-                              height: 1.35,
-                            ),
+                  // 8. "OR" Divider
+                  Row(
+                    children: const [
+                      Expanded(child: Divider(color: AppTheme.cardBorder, thickness: 1)),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Text(
+                          'OR',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: AppTheme.textSubtle,
+                            letterSpacing: 0.5,
                           ),
                         ),
-                      ],
+                      ),
+                      Expanded(child: Divider(color: AppTheme.cardBorder, thickness: 1)),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+
+                  // 9. "Continue with Google" Button
+                  SizedBox(
+                    height: 50,
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: AppTheme.backgroundWhite,
+                        side: const BorderSide(color: AppTheme.cardBorder, width: 1.2),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(28),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                      ),
+                      onPressed: () {},
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _buildGoogleLogo(),
+                          const SizedBox(width: 12),
+                          const Text(
+                            'Continue with Google',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              color: AppTheme.darkText,
+                              letterSpacing: 0.1,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // 10. Footer: "Don't have an account? Sign Up"
+                  Center(
+                    child: RichText(
+                      text: TextSpan(
+                        children: const [
+                          TextSpan(
+                            text: "Don't have an account? ",
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: AppTheme.textMuted,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          TextSpan(
+                            text: 'Sign Up',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: AppTheme.primaryGreen,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Subtle Clinical Regulatory Notice
+                  Text(
+                    AppConstants.clinicalScopeBoundaryStatement,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: AppTheme.textSubtle.withOpacity(0.8),
+                      height: 1.3,
                     ),
                   ),
                 ],
               ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGoogleLogo() {
+    return Container(
+      width: 20,
+      height: 20,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 2,
+            offset: const Offset(0, 1),
+          ),
+        ],
+      ),
+      child: Center(
+        child: Text(
+          'G',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w900,
+            fontFamily: 'sans-serif',
+            foreground: Paint()
+              ..shader = const LinearGradient(
+                colors: [
+                  Color(0xFF4285F4),
+                  Color(0xFFEA4335),
+                  Color(0xFFFBBC05),
+                  Color(0xFF34A853),
+                ],
+              ).createShader(const Rect.fromLTWH(0.0, 0.0, 20.0, 20.0)),
           ),
         ),
       ),

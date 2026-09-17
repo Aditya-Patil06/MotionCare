@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../ai/engine/exercise_engine.dart';
 import '../../core/theme.dart';
+import '../../core/widgets/motioncare_logo.dart';
 import '../../exercises/bicep_curl/bicep_curl_rule.dart';
 import '../../exercises/shoulder_raise/shoulder_raise_rule.dart';
 import '../../models/enums.dart';
@@ -44,10 +45,11 @@ class _LiveExerciseScreenState extends State<LiveExerciseScreen> {
   Timer? _simulationTimer;
   EngineFrame? _latestFrame;
   bool _isSessionActive = true;
+  bool _isPaused = false;
 
   // Interactive controls for testing/demo on emulators or real hardware
   double _manualAngleSlider = 160.0;
-  bool _isSimulatedDropoutActive = false;
+  final bool _isSimulatedDropoutActive = false;
 
   @override
   void initState() {
@@ -142,6 +144,7 @@ class _LiveExerciseScreenState extends State<LiveExerciseScreen> {
         t.cancel();
         return;
       }
+      if (_isPaused) return;
 
       // Handle visibility dropout simulation
       if (_isSimulatedDropoutActive) {
@@ -205,6 +208,8 @@ class _LiveExerciseScreenState extends State<LiveExerciseScreen> {
   }
 
   void _onNewFrame(Map<String, Landmark> landmarks) {
+    if (_isPaused) return;
+
     final frame = _engine.processFrame(
       landmarks: landmarks,
       timestamp: DateTime.now(),
@@ -270,305 +275,389 @@ class _LiveExerciseScreenState extends State<LiveExerciseScreen> {
     final isRep = widget.plan.exerciseType == ExerciseType.rep;
 
     return Scaffold(
+      backgroundColor: AppTheme.backgroundWhite,
       appBar: AppBar(
-        title: Text('${widget.plan.exerciseName} Live Monitor'),
+        backgroundColor: AppTheme.backgroundWhite,
+        elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppTheme.darkText, size: 20),
+          tooltip: 'Back',
+          onPressed: () => Navigator.maybePop(context),
+        ),
+        title: const MotionCareLogo(fontSize: 20, showTagline: false),
         actions: [
           if (widget.plan.referenceVideoUrl.isNotEmpty)
             IconButton(
-              icon: const Icon(Icons.videocam_outlined, color: AppTheme.primaryTeal),
+              icon: const Icon(Icons.videocam_outlined, color: AppTheme.primaryGreen),
               tooltip: 'Doctor Form Demo',
               onPressed: () => ClinicianVideoDialog.show(context, widget.plan),
             ),
           IconButton(
-            icon: const Icon(Icons.stop_circle_outlined, color: AppTheme.stateIncorrect),
-            tooltip: 'End Session',
+            icon: const Icon(Icons.check_circle_outline_rounded, color: AppTheme.primaryGreen),
+            tooltip: 'Finish Session',
             onPressed: _completeSession,
           ),
+          const SizedBox(width: 4),
         ],
       ),
-      body: Column(
-        children: [
-          // 1. Live Camera / Skeleton Viewport
-          Expanded(
-            flex: 5,
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: _getStateColor(frame?.aiState),
-                  width: 2.5,
-                ),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(14),
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    // Camera feed if initialized
-                    if (_isCameraReady && _cameraController != null)
-                      CameraPreview(_cameraController!)
-                    else
-                      Container(
-                        color: AppTheme.darkBg,
-                        child: _cameraErrorMessage != null && !kDebugMode
-                            ? Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(24.0),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Icon(Icons.videocam_off_rounded,
-                                          size: 48, color: AppTheme.stateIncorrect),
-                                      const SizedBox(height: 12),
-                                      const Text(
-                                        'Camera Unavailable',
-                                        style: TextStyle(
-                                          color: AppTheme.textLight,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        _cameraErrorMessage!,
-                                        textAlign: TextAlign.center,
-                                        style: const TextStyle(
-                                            color: AppTheme.textMuted, fontSize: 13),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              )
-                            : null,
-                      ),
-
-                    // Personalized Guidance & Skeleton Overlay (Section 19)
-                    if (frame != null)
-                      CustomPaint(
-                        painter: PersonalizedGuidancePainter(
-                          landmarks: frame.landmarks,
-                          currentAngle: frame.currentAngle,
-                          targetAngle: frame.targetAngle,
-                          tolerance: frame.tolerance,
-                          aiState: frame.aiState,
-                          bodySide: widget.plan.bodySide,
-                          exerciseId: widget.plan.exerciseId,
-                          previewImageSize: _cameraController?.value.previewSize,
-                          isFrontCamera: _isCameraReady && _cameraController != null,
-                        ),
-                      ),
-
-                    // Directional Feedback Pill (Section 31 & 32)
-                    Positioned(
-                      top: 16,
-                      left: 16,
-                      right: 16,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 14, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: _getStateColor(frame?.aiState).withOpacity(0.9),
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.black45,
-                              blurRadius: 8,
-                              offset: Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(_getStateIcon(frame?.aiState),
-                                color: Colors.white, size: 20),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Text(
-                                frame?.feedbackMessage ?? 'Position body in camera view',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 13,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    // State Badge
-                    Positioned(
-                      bottom: 16,
-                      left: 16,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: Colors.black87,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: _getStateColor(frame?.aiState),
-                            width: 1.5,
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              width: 8,
-                              height: 8,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: _getStateColor(frame?.aiState),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              _getStateText(frame?.aiState),
-                              style: TextStyle(
-                                color: _getStateColor(frame?.aiState),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Centered Exercise Title matching Image 2
+            Padding(
+              padding: const EdgeInsets.only(top: 4, bottom: 12),
+              child: Center(
+                child: Text(
+                  widget.plan.exerciseName,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w800,
+                    color: AppTheme.darkText,
+                    letterSpacing: -0.5,
+                  ),
                 ),
               ),
             ),
-          ),
 
-          // 2. Metrics & Progression HUD (Section 31 & 32)
-          Expanded(
-            flex: 4,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: const BoxDecoration(
-                color: AppTheme.cardBg,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                border: Border(top: BorderSide(color: AppTheme.cardBorder, width: 1)),
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+            // 1. Live Camera / Skeleton Viewport with 26px rounded corners
+            Expanded(
+              flex: 5,
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(26),
+                  border: Border.all(
+                    color: _isPaused ? AppTheme.textMuted : _getStateColor(frame?.aiState),
+                    width: 2.0,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 16,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(24),
+                  child: Stack(
+                    fit: StackFit.expand,
                     children: [
-                      // Target Angle (Personalized from Clinician Reference)
-                      _buildHudCard(
-                        title: 'Target Angle',
-                        value: '${widget.plan.effectiveTargetAngle.toStringAsFixed(1)}°',
-                        subtitle: '±${widget.plan.extractedAngleTolerance.toStringAsFixed(0)}° tolerance',
-                        color: AppTheme.primaryTeal,
+                      // Camera feed if initialized
+                      if (_isCameraReady && _cameraController != null)
+                        CameraPreview(_cameraController!)
+                      else
+                        Container(
+                          color: AppTheme.darkBg,
+                          child: _cameraErrorMessage != null && !kDebugMode
+                              ? Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(24.0),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        const Icon(Icons.videocam_off_rounded,
+                                            size: 48, color: AppTheme.stateIncorrect),
+                                        const SizedBox(height: 12),
+                                        const Text(
+                                          'Camera Unavailable',
+                                          style: TextStyle(
+                                            color: AppTheme.textLight,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          _cameraErrorMessage!,
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                              color: AppTheme.textMuted, fontSize: 13),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              : null,
+                        ),
+
+                      // Personalized Guidance & Skeleton Overlay
+                      if (frame != null)
+                        CustomPaint(
+                          painter: PersonalizedGuidancePainter(
+                            landmarks: frame.landmarks,
+                            currentAngle: frame.currentAngle,
+                            targetAngle: frame.targetAngle,
+                            tolerance: frame.tolerance,
+                            aiState: frame.aiState,
+                            bodySide: widget.plan.bodySide,
+                            exerciseId: widget.plan.exerciseId,
+                            previewImageSize: _cameraController?.value.previewSize,
+                            isFrontCamera: _isCameraReady && _cameraController != null,
+                          ),
+                        ),
+
+                      // Directional Feedback Pill
+                      Positioned(
+                        top: 16,
+                        left: 16,
+                        right: 16,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 14, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: (_isPaused ? Colors.black87 : _getStateColor(frame?.aiState)).withOpacity(0.92),
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                _isPaused ? Icons.pause_circle_outline_rounded : _getStateIcon(frame?.aiState),
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  _isPaused
+                                      ? 'Session Paused — Tap Start to resume'
+                                      : (frame?.feedbackMessage ?? 'Position body in camera view'),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                      // Current Measured Angle
-                      _buildHudCard(
-                        title: 'Live Angle',
-                        value: frame != null && frame.isVisibilityValid
-                            ? '${frame.currentAngle.toStringAsFixed(1)}°'
-                            : '--',
-                        subtitle: frame != null && frame.isVisibilityValid
-                            ? 'Tracking active'
-                            : 'Searching body',
-                        color: _getStateColor(frame?.aiState),
-                      ),
-                      // Reps or Hold Progress
-                      _buildHudCard(
-                        title: isRep ? 'Repetitions' : 'Hold Time',
-                        value: isRep
-                            ? '${frame?.validReps ?? 0} / ${widget.plan.reps}'
-                            : '${frame?.holdState?.currentHoldSeconds.toInt() ?? 0}s / ${widget.plan.holdDurationSeconds.toInt()}s',
-                        subtitle: isRep
-                            ? '${frame?.invalidAttempts ?? 0} incomplete'
-                            : (frame?.holdState?.isPaused ?? false
-                                ? 'PAUSED'
-                                : 'ACTIVE'),
-                        color: AppTheme.stateCorrect,
+
+                      // State Badge
+                      Positioned(
+                        bottom: 16,
+                        left: 16,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.75),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: _isPaused ? AppTheme.textMuted : _getStateColor(frame?.aiState),
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 8,
+                                height: 8,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: _isPaused ? AppTheme.textMuted : _getStateColor(frame?.aiState),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                _isPaused ? 'PAUSED' : _getStateText(frame?.aiState),
+                                style: TextStyle(
+                                  color: _isPaused ? Colors.white : _getStateColor(frame?.aiState),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 11,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ],
                   ),
-                  if (kDebugMode && !_isCameraReady) ...[
-                    const Divider(height: 20),
-                    Row(
-                      children: [
-                        const Text(
-                          'Live Angle Adjuster (Debug Only):',
-                          style: TextStyle(fontSize: 12, color: AppTheme.textMuted),
-                        ),
-                        Expanded(
-                          child: Slider(
-                            value: _manualAngleSlider,
-                            min: 20.0,
-                            max: 180.0,
-                            divisions: 32,
-                            label: '${_manualAngleSlider.toInt()}°',
-                            activeColor: AppTheme.primaryTeal,
-                            onChanged: (val) {
-                              setState(() => _manualAngleSlider = val);
-                            },
-                          ),
-                        ),
-                        Text(
-                          '${_manualAngleSlider.toInt()}°',
-                          style: const TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.primaryTeal,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                  const SizedBox(height: 12),
+                ),
+              ),
+            ),
 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      if (kDebugMode && !_isCameraReady)
-                        ElevatedButton.icon(
-                          icon: Icon(
-                            _isSimulatedDropoutActive
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                            size: 16,
-                          ),
-                          label: Text(
-                            _isSimulatedDropoutActive
-                                ? 'Restore Visibility'
-                                : 'Simulate Dropout',
-                            style: const TextStyle(fontSize: 12),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: _isSimulatedDropoutActive
-                                ? AppTheme.stateCorrect
-                                : AppTheme.surfaceBg,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _isSimulatedDropoutActive = !_isSimulatedDropoutActive;
-                            });
-                          },
-                        )
-                      else
-                        const Spacer(),
-                      ElevatedButton.icon(
-                        icon: const Icon(Icons.check, size: 16),
-                        label: const Text('Finish Session', style: TextStyle(fontSize: 12)),
-                        style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryTeal),
-                        onPressed: _completeSession,
-                      ),
-                    ],
+            const SizedBox(height: 12),
+
+            // 2. Metrics & Progression HUD (Clean light cards)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _buildHudCard(
+                      title: 'TARGET ANGLE',
+                      value: '${widget.plan.effectiveTargetAngle.toStringAsFixed(0)}°',
+                      subtitle: '±${widget.plan.extractedAngleTolerance.toStringAsFixed(0)}° tol',
+                      color: AppTheme.primaryGreen,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _buildHudCard(
+                      title: 'LIVE ANGLE',
+                      value: frame != null && frame.isVisibilityValid
+                          ? '${frame.currentAngle.toStringAsFixed(0)}°'
+                          : '--',
+                      subtitle: frame != null && frame.isVisibilityValid ? 'Active' : 'Searching',
+                      color: _isPaused ? AppTheme.textMuted : _getStateColor(frame?.aiState),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _buildHudCard(
+                      title: isRep ? 'REPETITIONS' : 'HOLD TIME',
+                      value: isRep
+                          ? '${frame?.validReps ?? 0} / ${widget.plan.reps}'
+                          : '${frame?.holdState?.currentHoldSeconds.toInt() ?? 0}s / ${widget.plan.holdDurationSeconds.toInt()}s',
+                      subtitle: isRep
+                          ? '${frame?.invalidAttempts ?? 0} incomplete'
+                          : (_isPaused ? 'PAUSED' : 'ACTIVE'),
+                      color: AppTheme.primaryGreen,
+                    ),
                   ),
                 ],
               ),
             ),
-          ),
-        ],
+
+            if (kDebugMode && !_isCameraReady) ...[
+              const SizedBox(height: 6),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  children: [
+                    const Text(
+                      'Simulate:',
+                      style: TextStyle(fontSize: 11, color: AppTheme.textMuted, fontWeight: FontWeight.w600),
+                    ),
+                    Expanded(
+                      child: Slider(
+                        value: _manualAngleSlider,
+                        min: 20.0,
+                        max: 180.0,
+                        divisions: 32,
+                        activeColor: AppTheme.primaryGreen,
+                        onChanged: (val) {
+                          setState(() => _manualAngleSlider = val);
+                        },
+                      ),
+                    ),
+                    Text(
+                      '${_manualAngleSlider.toInt()}°',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.primaryGreen,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+
+            // 3. Bottom Dual Stadium Controls (Start + Pause) strictly matching Image 2
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 14, 20, 8),
+              child: Row(
+                children: [
+                  // Start Button (Green Stadium Pill)
+                  Expanded(
+                    child: SizedBox(
+                      height: 52,
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppTheme.primaryGreen,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(28),
+                          ),
+                        ),
+                        icon: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 24),
+                        label: const Text(
+                          'Start',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                            letterSpacing: 0.2,
+                          ),
+                        ),
+                        onPressed: () {
+                          if (_isPaused) {
+                            setState(() => _isPaused = false);
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+
+                  // Pause Button (Light Gray Stadium Pill)
+                  Expanded(
+                    child: SizedBox(
+                      height: 52,
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppTheme.pauseButtonBg,
+                          foregroundColor: AppTheme.darkText,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(28),
+                          ),
+                        ),
+                        icon: const Icon(Icons.pause_rounded, color: AppTheme.darkText, size: 24),
+                        label: const Text(
+                          'Pause',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: AppTheme.darkText,
+                            letterSpacing: 0.2,
+                          ),
+                        ),
+                        onPressed: () {
+                          if (!_isPaused) {
+                            setState(() => _isPaused = true);
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Finish Session Action
+            Padding(
+              padding: const EdgeInsets.only(bottom: 6),
+              child: TextButton.icon(
+                onPressed: _completeSession,
+                icon: const Icon(Icons.check_circle_outline_rounded, size: 16, color: AppTheme.textMuted),
+                label: const Text(
+                  'Finish Session & View Report',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppTheme.textMuted,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -579,30 +668,42 @@ class _LiveExerciseScreenState extends State<LiveExerciseScreen> {
     required String subtitle,
     required Color color,
   }) {
-    return Column(
-      children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 10,
-            fontWeight: FontWeight.w600,
-            color: AppTheme.textMuted,
-            letterSpacing: 0.5,
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+      decoration: BoxDecoration(
+        color: AppTheme.surfaceGray,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppTheme.cardBorder, width: 1),
+      ),
+      child: Column(
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 9,
+              fontWeight: FontWeight.w700,
+              color: AppTheme.textMuted,
+              letterSpacing: 0.4,
+            ),
           ),
-        ),
-        const SizedBox(height: 3),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w800,
-            color: color,
-            letterSpacing: -0.5,
+          const SizedBox(height: 3),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w800,
+              color: color,
+              letterSpacing: -0.5,
+            ),
           ),
-        ),
-        const SizedBox(height: 2),
-        Text(subtitle, style: const TextStyle(fontSize: 10, color: AppTheme.textMuted)),
-      ],
+          const SizedBox(height: 2),
+          Text(
+            subtitle,
+            style: const TextStyle(fontSize: 9, color: AppTheme.textMuted),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
     );
   }
 

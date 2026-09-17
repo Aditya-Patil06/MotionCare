@@ -256,7 +256,7 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
                                 const Text('TARGET AREA', style: TextStyle(fontSize: 10, color: AppTheme.textMuted, fontWeight: FontWeight.w600)),
                                 const SizedBox(height: 2),
                                 Text(
-                                  healthProfile?.affectedBodyPart ?? 'Right Elbow',
+                                  (healthProfile?.affectedBodyPart ?? 'Right Elbow').split(' / ').first,
                                   style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppTheme.textLight),
                                   overflow: TextOverflow.ellipsis,
                                 ),
