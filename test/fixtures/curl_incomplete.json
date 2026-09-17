@@ -1,0 +1,23 @@
+{
+  "description": "Deterministic fixture: Incomplete bicep curl where patient returns before reaching target",
+  "exerciseId": "bicep_curl",
+  "targetAngle": 45.0,
+  "tolerance": 12.0,
+  "prescribedReps": 3,
+  "frames": [
+    {"timestampMs": 0, "angle": 160.0, "visibility": true},
+    {"timestampMs": 100, "angle": 150.0, "visibility": true},
+    {"timestampMs": 200, "angle": 130.0, "visibility": true},
+    {"timestampMs": 300, "angle": 100.0, "visibility": true},
+    {"timestampMs": 400, "angle": 80.0, "visibility": true},
+    {"timestampMs": 500, "angle": 82.0, "visibility": true},
+    {"timestampMs": 600, "angle": 110.0, "visibility": true},
+    {"timestampMs": 700, "angle": 135.0, "visibility": true},
+    {"timestampMs": 800, "angle": 155.0, "visibility": true}
+  ],
+  "expected": {
+    "validReps": 0,
+    "invalidAttempts": 1,
+    "issueCode": "incompleteMovement"
+  }
+}

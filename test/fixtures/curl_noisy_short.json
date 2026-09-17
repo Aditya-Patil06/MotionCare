@@ -1,0 +1,15 @@
+{
+  "description": "Deterministic fixture: Insufficient/noisy recording under 10 valid samples",
+  "exerciseId": "bicep_curl",
+  "frames": [
+    {"timestampMs": 0, "angle": 160.0, "visibility": true},
+    {"timestampMs": 100, "angle": 150.0, "visibility": true},
+    {"timestampMs": 200, "angle": 130.0, "visibility": false},
+    {"timestampMs": 300, "angle": 100.0, "visibility": true},
+    {"timestampMs": 400, "angle": 60.0, "visibility": false}
+  ],
+  "expected": {
+    "maxConfidence": 0.40,
+    "isPlausible": false
+  }
+}

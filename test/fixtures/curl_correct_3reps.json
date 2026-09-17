@@ -1,0 +1,41 @@
+{
+  "description": "Deterministic fixture: 3 complete bicep curls with clean form",
+  "exerciseId": "bicep_curl",
+  "targetAngle": 45.0,
+  "tolerance": 12.0,
+  "prescribedReps": 3,
+  "frames": [
+    {"timestampMs": 0, "angle": 160.0, "visibility": true},
+    {"timestampMs": 100, "angle": 155.0, "visibility": true},
+    {"timestampMs": 200, "angle": 130.0, "visibility": true},
+    {"timestampMs": 300, "angle": 95.0, "visibility": true},
+    {"timestampMs": 400, "angle": 60.0, "visibility": true},
+    {"timestampMs": 500, "angle": 45.0, "visibility": true},
+    {"timestampMs": 600, "angle": 44.0, "visibility": true},
+    {"timestampMs": 700, "angle": 70.0, "visibility": true},
+    {"timestampMs": 800, "angle": 110.0, "visibility": true},
+    {"timestampMs": 900, "angle": 152.0, "visibility": true},
+    {"timestampMs": 1000, "angle": 160.0, "visibility": true},
+    {"timestampMs": 1100, "angle": 135.0, "visibility": true},
+    {"timestampMs": 1200, "angle": 90.0, "visibility": true},
+    {"timestampMs": 1300, "angle": 55.0, "visibility": true},
+    {"timestampMs": 1400, "angle": 43.0, "visibility": true},
+    {"timestampMs": 1500, "angle": 43.0, "visibility": true},
+    {"timestampMs": 1600, "angle": 80.0, "visibility": true},
+    {"timestampMs": 1700, "angle": 120.0, "visibility": true},
+    {"timestampMs": 1800, "angle": 155.0, "visibility": true},
+    {"timestampMs": 1900, "angle": 160.0, "visibility": true},
+    {"timestampMs": 2000, "angle": 130.0, "visibility": true},
+    {"timestampMs": 2100, "angle": 85.0, "visibility": true},
+    {"timestampMs": 2200, "angle": 46.0, "visibility": true},
+    {"timestampMs": 2300, "angle": 45.0, "visibility": true},
+    {"timestampMs": 2400, "angle": 75.0, "visibility": true},
+    {"timestampMs": 2500, "angle": 115.0, "visibility": true},
+    {"timestampMs": 2600, "angle": 155.0, "visibility": true}
+  ],
+  "expected": {
+    "validReps": 3,
+    "invalidAttempts": 0,
+    "finalPhase": "idle"
+  }
+}

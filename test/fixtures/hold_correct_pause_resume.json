@@ -1,0 +1,19 @@
+{
+  "description": "Deterministic fixture: Shoulder hold with 15s hold, 5s posture loss, 15s recovery hold",
+  "exerciseId": "shoulder_raise",
+  "targetHoldSeconds": 30.0,
+  "targetAngle": 90.0,
+  "tolerance": 12.0,
+  "ticks": [
+    {"durationSeconds": 15.0, "aiState": "correct", "issueCode": "none"},
+    {"durationSeconds": 5.0, "aiState": "incorrect", "issueCode": "postureDeviation"},
+    {"durationSeconds": 15.0, "aiState": "correct", "issueCode": "none"}
+  ],
+  "expected": {
+    "correctHoldSeconds": 30.0,
+    "incorrectHoldSeconds": 5.0,
+    "postureBreaks": 1,
+    "recoveries": 1,
+    "isCompleted": true
+  }
+}

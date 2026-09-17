@@ -1,0 +1,75 @@
+// firestore.rules
+// Specification v7 Section 28: Firebase Security Rules for Clinical Role Isolation
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isUser(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isDoctor() {
+      return isAuthenticated() && getUserData().role == 'doctor';
+    }
+
+    function isPatient() {
+      return isAuthenticated() && getUserData().role == 'patient';
+    }
+
+    // Users Collection
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isUser(userId);
+    }
+
+    // Patients Health Profiles: Protected clinical information
+    match /patients/{patientId}/profile/health {
+      // Clinician can read and write; Patient can only read their own profile
+      allow read: if isDoctor() || isUser(patientId);
+      // Patients cannot modify clinician assessment notes or health conditions
+      allow write: if isDoctor();
+    }
+
+    // Exercises Catalog: Read-only for authenticated users
+    match /exercises/{exerciseId} {
+      allow read: if isAuthenticated();
+      allow write: if isDoctor();
+    }
+
+    // Exercise Plans: Clinician defines, Patient reads
+    match /plans/{planId} {
+      // Doctor can read all their patients' plans; Patient can read only their own assigned plans
+      allow read: if isDoctor() || (isPatient() && resource.data.patientId == request.auth.uid);
+      
+      // Only doctors can create plans
+      allow create: if isDoctor() && request.resource.data.doctorId == request.auth.uid;
+      
+      // Only doctors can update plans (e.g. target angles, reps); Patients cannot modify clinician targets
+      allow update: if isDoctor() && resource.data.doctorId == request.auth.uid;
+      
+      allow delete: if isDoctor() && resource.data.doctorId == request.auth.uid;
+    }
+
+    // Exercise Sessions: Patient executes and writes own session results; Doctor reviews
+    match /sessions/{sessionId} {
+      // Doctor can read patient sessions; Patient can read own sessions
+      allow read: if isDoctor() || (isPatient() && resource.data.patientId == request.auth.uid);
+      
+      // Patient can create their own session record
+      allow create: if isPatient() && request.resource.data.patientId == request.auth.uid;
+      
+      // Sessions are immutable once recorded
+      allow update, delete: if false;
+    }
+  }
+}

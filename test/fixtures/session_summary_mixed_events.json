@@ -1,0 +1,23 @@
+{
+  "description": "Deterministic fixture: Mixed session event sequence for summary generation verification",
+  "sessionId": "sess_fixed_001",
+  "planId": "plan_fixed_001",
+  "patientId": "pat_fixed_001",
+  "exerciseName": "Bicep Curl",
+  "exerciseType": "rep",
+  "prescribedReps": 5,
+  "reps": [
+    {"repIndex": 1, "isValid": true, "peakAngle": 44.0, "targetAngle": 45.0, "issueCode": "none"},
+    {"repIndex": 2, "isValid": true, "peakAngle": 45.0, "targetAngle": 45.0, "issueCode": "none"},
+    {"repIndex": 3, "isValid": false, "peakAngle": 82.0, "targetAngle": 45.0, "issueCode": "incompleteMovement"},
+    {"repIndex": 4, "isValid": true, "peakAngle": 43.0, "targetAngle": 45.0, "issueCode": "none"},
+    {"repIndex": 5, "isValid": true, "peakAngle": 22.0, "targetAngle": 45.0, "issueCode": "overshoot"}
+  ],
+  "visibilityLossSeconds": 1.5,
+  "expected": {
+    "validReps": 4,
+    "invalidAttempts": 1,
+    "accuracy": 80.0,
+    "commonIssue": "incompleteMovement"
+  }
+}
