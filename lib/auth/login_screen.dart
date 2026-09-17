@@ -84,49 +84,54 @@ class _LoginScreenState extends State<LoginScreen> {
                   // App Branding Header
                   Center(
                     child: Container(
-                      padding: const EdgeInsets.all(18),
+                      width: 64,
+                      height: 64,
                       decoration: BoxDecoration(
-                        color: AppTheme.primaryTeal.withOpacity(0.12),
+                        color: AppTheme.surfaceBg,
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: AppTheme.primaryTeal.withOpacity(0.35),
-                          width: 2,
+                          color: AppTheme.cardBorder,
+                          width: 1,
                         ),
                       ),
                       child: const Icon(
                         Icons.accessibility_new_rounded,
-                        size: 52,
+                        size: 36,
                         color: AppTheme.primaryTeal,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 14),
                   const Text(
                     'MotionCare',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
                       color: AppTheme.textLight,
-                      letterSpacing: 0.5,
+                      letterSpacing: -0.5,
                     ),
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 4),
                   const Text(
-                    'AI-Assisted Physiotherapy Monitoring System',
+                    'AI-Assisted Physiotherapy Monitoring',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 13, color: AppTheme.textMuted),
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      color: AppTheme.textMuted,
+                    ),
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 24),
 
                   // Role Selection Segmented Control
                   Container(
                     decoration: BoxDecoration(
-                      color: AppTheme.cardBg,
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: Colors.white12),
+                      color: AppTheme.surfaceBg,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppTheme.cardBorder, width: 1),
                     ),
-                    padding: const EdgeInsets.all(4),
+                    padding: const EdgeInsets.all(3),
                     child: Row(
                       children: [
                         Expanded(
@@ -283,13 +288,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
 
                   if (_selectedRole == UserRole.patient) ...[
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 16),
                     const Text(
-                      'Select Patient Account:',
+                      'Select Patient Account',
                       style: TextStyle(
                         fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.primaryAccent,
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.textMuted,
+                        letterSpacing: 0.2,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -304,12 +310,16 @@ class _LoginScreenState extends State<LoginScreen> {
                             style: TextStyle(
                               fontSize: 12,
                               color: isSelected ? AppTheme.darkBg : AppTheme.textLight,
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                             ),
                           ),
                           selected: isSelected,
                           selectedColor: AppTheme.primaryAccent,
-                          backgroundColor: AppTheme.cardBg,
+                          backgroundColor: AppTheme.surfaceBg,
+                          side: BorderSide(
+                            color: isSelected ? AppTheme.primaryAccent : AppTheme.cardBorder,
+                            width: 1,
+                          ),
                           onSelected: (val) {
                             if (val) {
                               setState(() {
@@ -322,57 +332,82 @@ class _LoginScreenState extends State<LoginScreen> {
                       }).toList(),
                     ),
                   ],
-                  const SizedBox(height: 18),
+                  const SizedBox(height: 20),
 
                   // Email Input Field
                   TextField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
+                    style: const TextStyle(fontSize: 14, color: AppTheme.textLight),
                     decoration: InputDecoration(
                       labelText: 'Account Email',
-                      prefixIcon: const Icon(Icons.alternate_email, size: 20),
+                      labelStyle: const TextStyle(fontSize: 13, color: AppTheme.textMuted),
+                      prefixIcon: const Icon(Icons.alternate_email, size: 18, color: AppTheme.textMuted),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: AppTheme.cardBorder),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: AppTheme.cardBorder),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: AppTheme.primaryTeal, width: 1.5),
                       ),
                       filled: true,
-                      fillColor: AppTheme.cardBg,
+                      fillColor: AppTheme.surfaceBg,
                     ),
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 12),
 
                   // Password Input Field
                   TextField(
                     controller: _passwordController,
                     obscureText: _obscurePassword,
+                    style: const TextStyle(fontSize: 14, color: AppTheme.textLight),
                     decoration: InputDecoration(
                       labelText: 'Password',
-                      prefixIcon: const Icon(Icons.lock_outline, size: 20),
+                      labelStyle: const TextStyle(fontSize: 13, color: AppTheme.textMuted),
+                      prefixIcon: const Icon(Icons.lock_outline, size: 18, color: AppTheme.textMuted),
                       suffixIcon: IconButton(
                         icon: Icon(
                           _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                          size: 20,
+                          size: 18,
+                          color: AppTheme.textMuted,
                         ),
                         onPressed: () {
                           setState(() => _obscurePassword = !_obscurePassword);
                         },
                       ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: AppTheme.cardBorder),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: AppTheme.cardBorder),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: AppTheme.primaryTeal, width: 1.5),
                       ),
                       filled: true,
-                      fillColor: AppTheme.cardBg,
+                      fillColor: AppTheme.surfaceBg,
                     ),
                   ),
-                  const SizedBox(height: 22),
+                  const SizedBox(height: 20),
 
                   // Sign In Button
                   SizedBox(
-                    height: 50,
+                    height: 48,
                     child: ElevatedButton.icon(
                       icon: auth.isLoading
                           ? const SizedBox(
-                              width: 20,
-                              height: 20,
+                              width: 18,
+                              height: 18,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
                                 color: AppTheme.darkBg,
@@ -382,6 +417,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               _selectedRole == UserRole.doctor
                                   ? Icons.medical_services_rounded
                                   : Icons.login_rounded,
+                              size: 18,
                               color: AppTheme.darkBg,
                             ),
                       label: Text(
@@ -391,15 +427,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ? 'Sign In to Doctor Dashboard'
                                 : 'Sign In to Patient Portal',
                         style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
                           color: AppTheme.darkBg,
+                          letterSpacing: 0.2,
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: _selectedRole == UserRole.doctor
                             ? AppTheme.primaryTeal
                             : AppTheme.primaryAccent,
+                        elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -407,25 +445,25 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: auth.isLoading ? null : _handleSignIn,
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 24),
 
                   // Section 1 Mandatory Clinical Boundary Disclaimer
                   Container(
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                     decoration: BoxDecoration(
-                      color: AppTheme.cardBg.withOpacity(0.6),
+                      color: AppTheme.surfaceBg,
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Colors.white10),
+                      border: Border.all(color: AppTheme.cardBorder),
                     ),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Icon(
                           Icons.shield_outlined,
-                          size: 18,
+                          size: 15,
                           color: AppTheme.primaryTeal,
                         ),
-                        const SizedBox(width: 10),
+                        const SizedBox(width: 8),
                         const Expanded(
                           child: Text(
                             AppConstants.clinicalScopeBoundaryStatement,

@@ -1,0 +1,12 @@
+﻿{
+  "motioncare-auto-push": {
+    "enabled": true,
+    "Stop": [
+      {
+        "type": "command",
+        "command": "powershell -NoProfile -ExecutionPolicy Bypass -File .agents\\scripts\\auto-push.ps1",
+        "timeout": 60
+      }
+    ]
+  }
+}

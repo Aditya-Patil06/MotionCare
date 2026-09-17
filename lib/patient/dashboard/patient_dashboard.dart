@@ -23,12 +23,16 @@ class PatientDashboard extends StatelessWidget {
     final plans = firestore.getPlansForPatient(patientId);
     final sessions = firestore.getSessionsForPatient(patientId);
 
+    final double avgAccuracy = sessions.isEmpty
+        ? 0
+        : sessions.map((s) => s.summary.accuracyPercentage).reduce((a, b) => a + b) / sessions.length;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Patient Exercise Home'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout, size: 20, color: Colors.white70),
+            icon: const Icon(Icons.logout, size: 20, color: AppTheme.textMuted),
             tooltip: 'Sign Out to Login Page',
             onPressed: () {
               auth.signOut();
@@ -39,114 +43,283 @@ class PatientDashboard extends StatelessWidget {
       body: RefreshIndicator(
         onRefresh: () async => Future.delayed(const Duration(milliseconds: 300)),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Patient Banner
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 26,
-                        backgroundColor: AppTheme.primaryAccent.withOpacity(0.2),
-                        child: const Icon(Icons.person, color: AppTheme.primaryAccent, size: 28),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              auth.currentUser?.name ?? 'Alex Rivera',
-                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.textLight),
-                            ),
-                            const SizedBox(height: 2),
-                            const Text('Assigned Clinician: Dr. Sarah Chen, PT, DPT', style: TextStyle(fontSize: 12, color: AppTheme.textMuted)),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 14),
-
-              // Mandatory Clinical Scope Boundary
+              // 1. Patient Profile Header
               Container(
-                padding: const EdgeInsets.all(12.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 decoration: BoxDecoration(
                   color: AppTheme.cardBg,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppTheme.primaryTeal.withOpacity(0.2)),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: AppTheme.cardBorder),
                 ),
-                child: const Text(
-                  AppConstants.clinicalScopeBoundaryStatement,
-                  style: TextStyle(fontSize: 11, color: AppTheme.textMuted, height: 1.3),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 22,
+                      backgroundColor: AppTheme.surfaceBg,
+                      child: const Icon(Icons.person_rounded, color: AppTheme.primaryAccent, size: 24),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            auth.currentUser?.name ?? 'Alex Rivera',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              color: AppTheme.textLight,
+                              letterSpacing: -0.3,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          const Text(
+                            'Clinician: Dr. Sarah Chen, PT, DPT',
+                            style: TextStyle(fontSize: 12, color: AppTheme.textMuted),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: AppTheme.stateCorrect.withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: AppTheme.stateCorrect.withOpacity(0.3)),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 6,
+                            height: 6,
+                            decoration: const BoxDecoration(
+                              color: AppTheme.stateCorrect,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 5),
+                          const Text(
+                            'ACTIVE',
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                              color: AppTheme.stateCorrect,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // 2. Glanceable At-a-Glance Stats Strip
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+                decoration: BoxDecoration(
+                  color: AppTheme.surfaceBg,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: AppTheme.cardBorder),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: _buildGlanceStat(
+                        label: 'COMPLETED',
+                        value: '${sessions.length}',
+                        unit: 'sessions',
+                        valueColor: AppTheme.textLight,
+                      ),
+                    ),
+                    Container(width: 1, height: 32, color: AppTheme.cardBorder),
+                    Expanded(
+                      child: _buildGlanceStat(
+                        label: 'ACCURACY',
+                        value: sessions.isEmpty ? '—' : '${avgAccuracy.toStringAsFixed(0)}%',
+                        unit: 'avg score',
+                        valueColor: AppTheme.stateCorrect,
+                      ),
+                    ),
+                    Container(width: 1, height: 32, color: AppTheme.cardBorder),
+                    Expanded(
+                      child: _buildGlanceStat(
+                        label: 'PLANS',
+                        value: '${plans.length}',
+                        unit: 'assigned',
+                        valueColor: AppTheme.primaryAccent,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 20),
 
-              // Assigned Exercise Plans Section
-              const Text(
-                'Assigned Exercise Plans',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.primaryTeal),
+              // 3. Assigned Exercise Plans Section
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Assigned Exercise Plans',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: AppTheme.textLight,
+                      letterSpacing: -0.2,
+                    ),
+                  ),
+                  Text(
+                    '${plans.length} prescribed',
+                    style: const TextStyle(fontSize: 12, color: AppTheme.textMuted),
+                  ),
+                ],
               ),
               const SizedBox(height: 10),
               if (plans.isEmpty)
-                const Card(
-                  child: Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Center(child: Text('No assigned plans from clinician.', style: TextStyle(color: AppTheme.textMuted))),
+                Container(
+                  padding: const EdgeInsets.all(24.0),
+                  decoration: BoxDecoration(
+                    color: AppTheme.cardBg,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: AppTheme.cardBorder),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      'No assigned plans from clinician.',
+                      style: TextStyle(color: AppTheme.textMuted, fontSize: 13),
+                    ),
                   ),
                 )
               else
                 ...plans.map((p) => _buildAssignedPlanCard(context, p)),
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
 
-              // Recent Performance Trends
+              // 4. Recent Session History
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('Recent Session History', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.primaryTeal)),
-                  Text('${sessions.length} sessions', style: const TextStyle(fontSize: 12, color: AppTheme.textMuted)),
+                  const Text(
+                    'Recent Session History',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: AppTheme.textLight,
+                      letterSpacing: -0.2,
+                    ),
+                  ),
+                  Text(
+                    '${sessions.length} sessions',
+                    style: const TextStyle(fontSize: 12, color: AppTheme.textMuted),
+                  ),
                 ],
               ),
               const SizedBox(height: 10),
               if (sessions.isEmpty)
-                const Card(
-                  child: Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Center(child: Text('No recorded sessions yet. Start your first exercise!', style: TextStyle(color: AppTheme.textMuted))),
+                Container(
+                  padding: const EdgeInsets.all(24.0),
+                  decoration: BoxDecoration(
+                    color: AppTheme.cardBg,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: AppTheme.cardBorder),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      'No recorded sessions yet. Start your first exercise!',
+                      style: TextStyle(color: AppTheme.textMuted, fontSize: 13),
+                    ),
                   ),
                 )
               else
-                ...sessions.map((s) => Card(
-                      margin: const EdgeInsets.only(bottom: 10),
-                      child: ListTile(
-                        leading: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: AppTheme.stateCorrect.withOpacity(0.15),
-                            borderRadius: BorderRadius.circular(8),
+                ...sessions.map((s) => Container(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: AppTheme.cardBg,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: AppTheme.cardBorder),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 38,
+                            height: 38,
+                            decoration: BoxDecoration(
+                              color: AppTheme.stateCorrect.withOpacity(0.12),
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: AppTheme.stateCorrect.withOpacity(0.25)),
+                            ),
+                            child: Center(
+                              child: Text(
+                                '${s.summary.accuracyPercentage.toStringAsFixed(0)}%',
+                                style: const TextStyle(
+                                  color: AppTheme.stateCorrect,
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ),
                           ),
-                          child: const Icon(Icons.check, color: AppTheme.stateCorrect, size: 20),
-                        ),
-                        title: Text(s.summary.exerciseName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                        subtitle: Text(
-                          s.summary.exerciseType == ExerciseType.rep
-                              ? 'Reps: ${s.summary.validReps}/${s.summary.targetReps} • Accuracy: ${s.summary.accuracyPercentage.toStringAsFixed(0)}%'
-                              : 'Hold: ${s.summary.correctHoldSeconds.toStringAsFixed(0)}s • Accuracy: ${s.summary.accuracyPercentage.toStringAsFixed(0)}%',
-                          style: const TextStyle(fontSize: 12, color: AppTheme.textMuted),
-                        ),
-                        trailing: Text(
-                          s.summary.createdAt.toString().substring(5, 10),
-                          style: const TextStyle(fontSize: 11, color: AppTheme.textMuted),
-                        ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  s.summary.exerciseName,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                    color: AppTheme.textLight,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  s.summary.exerciseType == ExerciseType.rep
+                                      ? '${s.summary.validReps}/${s.summary.targetReps} reps'
+                                      : '${s.summary.correctHoldSeconds.toStringAsFixed(0)}s / ${s.summary.targetHoldSeconds.toStringAsFixed(0)}s hold',
+                                  style: const TextStyle(fontSize: 12, color: AppTheme.textMuted),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Text(
+                            s.summary.createdAt.toString().substring(5, 10),
+                            style: const TextStyle(fontSize: 12, color: AppTheme.textMuted),
+                          ),
+                        ],
                       ),
                     )),
+              const SizedBox(height: 24),
+
+              // 5. Subtle Scope Boundary Note at Footer
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                decoration: BoxDecoration(
+                  color: AppTheme.surfaceBg,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: AppTheme.cardBorder),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(Icons.info_outline, size: 15, color: AppTheme.primaryTeal),
+                    const SizedBox(width: 8),
+                    const Expanded(
+                      child: Text(
+                        AppConstants.clinicalScopeBoundaryStatement,
+                        style: TextStyle(fontSize: 11, color: AppTheme.textMuted, height: 1.35),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
             ],
           ),
         ),
@@ -154,107 +327,228 @@ class PatientDashboard extends StatelessWidget {
     );
   }
 
+  Widget _buildGlanceStat({
+    required String label,
+    required String value,
+    required String unit,
+    required Color valueColor,
+  }) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.w600,
+            color: AppTheme.textMuted,
+            letterSpacing: 0.5,
+          ),
+        ),
+        const SizedBox(height: 3),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w800,
+            color: valueColor,
+            letterSpacing: -0.5,
+          ),
+        ),
+        Text(
+          unit,
+          style: const TextStyle(fontSize: 10, color: AppTheme.textMuted),
+        ),
+      ],
+    );
+  }
+
   Widget _buildAssignedPlanCard(BuildContext context, ExercisePlan plan) {
     final isRep = plan.exerciseType == ExerciseType.rep;
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 14),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      isRep ? Icons.fitness_center : Icons.timer,
-                      color: AppTheme.primaryTeal,
-                      size: 22,
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      plan.exerciseName,
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppTheme.textLight),
-                    ),
-                  ],
-                ),
-                if (plan.isClinicianOverridden)
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: AppTheme.stateInsufficientVisibility.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: const Text('Clinician Adjusted', style: TextStyle(fontSize: 10, color: AppTheme.stateInsufficientVisibility, fontWeight: FontWeight.bold)),
-                  ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'Personalized Target Angle: ${plan.effectiveTargetAngle.toStringAsFixed(1)}° (±${plan.extractedAngleTolerance.toStringAsFixed(0)}° tolerance)',
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppTheme.primaryAccent),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              isRep
-                  ? 'Prescription: ${plan.reps} reps  x  ${plan.sets} sets  •  ${plan.bodySide.name.toUpperCase()} Arm'
-                  : 'Prescription: ${plan.holdDurationSeconds.toInt()}s sustained hold  •  ${plan.bodySide.name.toUpperCase()} Arm',
-              style: const TextStyle(fontSize: 12, color: AppTheme.textMuted),
-            ),
-            if (plan.referenceVideoUrl.isNotEmpty) ...[
-              const SizedBox(height: 6),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: AppTheme.cardBg,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppTheme.cardBorder),
+      ),
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
               Row(
                 children: [
-                  const Icon(Icons.videocam, size: 14, color: AppTheme.primaryTeal),
-                  const SizedBox(width: 5),
-                  Text(
-                    'Doctor Video Demonstration Available',
-                    style: TextStyle(
-                      fontSize: 11,
+                  Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: AppTheme.surfaceBg,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: AppTheme.cardBorder),
+                    ),
+                    child: Icon(
+                      isRep ? Icons.fitness_center : Icons.timer,
                       color: AppTheme.primaryTeal,
-                      fontWeight: FontWeight.bold,
+                      size: 18,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    plan.exerciseName,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                      color: AppTheme.textLight,
+                      letterSpacing: -0.3,
                     ),
                   ),
                 ],
               ),
-            ],
-            const Divider(height: 22),
-
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    icon: const Icon(Icons.play_circle_fill, size: 18),
-                    label: const Text('Watch Video', style: TextStyle(fontSize: 12)),
-                    style: OutlinedButton.styleFrom(foregroundColor: AppTheme.primaryTeal),
-                    onPressed: () {
-                      ClinicianVideoDialog.show(context, plan);
-                    },
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: AppTheme.surfaceBg,
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(color: AppTheme.cardBorder),
+                ),
+                child: Text(
+                  '${plan.bodySide.name.toUpperCase()} SIDE',
+                  style: const TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    color: AppTheme.textMuted,
+                    letterSpacing: 0.5,
                   ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    icon: const Icon(Icons.camera_alt_outlined, size: 18),
-                    label: const Text('Start Exercise', style: TextStyle(fontSize: 12)),
-                    style: ElevatedButton.styleFrom(backgroundColor: AppTheme.stateCorrect),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => CalibrationScreen(plan: plan),
-                        ),
-                      );
-                    },
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+
+          // Target Angle & Prescription Highlight
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppTheme.surfaceBg,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppTheme.cardBorder),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'TARGET ANGLE',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.textMuted,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      '${plan.effectiveTargetAngle.toStringAsFixed(1)}° (±${plan.extractedAngleTolerance.toStringAsFixed(0)}°)',
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                        color: AppTheme.primaryAccent,
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    const Text(
+                      'PRESCRIPTION',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.textMuted,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      isRep
+                          ? '${plan.reps} reps × ${plan.sets} sets'
+                          : '${plan.holdDurationSeconds.toInt()}s hold',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: AppTheme.textLight,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          if (plan.referenceVideoUrl.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                const Icon(Icons.videocam_rounded, size: 14, color: AppTheme.primaryTeal),
+                const SizedBox(width: 6),
+                const Text(
+                  'Doctor Video Demonstration Available',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppTheme.primaryTeal,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
             ),
           ],
-        ),
+          const SizedBox(height: 14),
+
+          // Actions
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  icon: const Icon(Icons.play_circle_outline, size: 16),
+                  label: const Text('Watch Video'),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  onPressed: () {
+                    ClinicianVideoDialog.show(context, plan);
+                  },
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: ElevatedButton.icon(
+                  icon: const Icon(Icons.fitness_center_rounded, size: 16),
+                  label: const Text('Start Exercise'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.stateCorrect,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => CalibrationScreen(plan: plan),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

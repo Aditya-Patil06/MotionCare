@@ -452,6 +452,7 @@ class _LiveExerciseScreenState extends State<LiveExerciseScreen> {
               decoration: const BoxDecoration(
                 color: AppTheme.cardBg,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                border: Border(top: BorderSide(color: AppTheme.cardBorder, width: 1)),
               ),
               child: Column(
                 children: [
@@ -580,14 +581,23 @@ class _LiveExerciseScreenState extends State<LiveExerciseScreen> {
   }) {
     return Column(
       children: [
-        Text(title, style: const TextStyle(fontSize: 11, color: AppTheme.textMuted)),
-        const SizedBox(height: 4),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.w600,
+            color: AppTheme.textMuted,
+            letterSpacing: 0.5,
+          ),
+        ),
+        const SizedBox(height: 3),
         Text(
           value,
           style: TextStyle(
             fontSize: 20,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w800,
             color: color,
+            letterSpacing: -0.5,
           ),
         ),
         const SizedBox(height: 2),
