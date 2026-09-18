@@ -56,6 +56,3 @@ class AuthGate extends StatelessWidget {
     }
   }
 }
-
-/// Backward compatible alias for [MotionCareApp].
-typedef PhysioApp = MotionCareApp;
