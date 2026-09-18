@@ -37,10 +37,7 @@ abstract class ExerciseRule {
   );
 
   /// Evaluates repetitions for rep-based exercises.
-  RepEvent? detectRep(
-    List<AngleSample> history,
-    ReferenceProfile profile,
-  );
+  RepEvent? detectRep(List<AngleSample> history, ReferenceProfile profile);
 
   /// Evaluates hold progress for hold-based exercises.
   HoldState detectHold(

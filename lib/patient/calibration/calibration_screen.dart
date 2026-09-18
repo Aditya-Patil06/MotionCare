@@ -3,7 +3,9 @@
 // Approximately 2 seconds of stable valid visibility (>=90% valid visibility) required before exercise.
 
 import 'dart:async';
+
 import 'package:flutter/material.dart';
+
 import '../../core/theme.dart';
 import '../../models/plan.dart';
 import '../exercise/live_exercise_screen.dart';
@@ -80,9 +82,7 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Camera Calibration Check'),
-      ),
+      appBar: AppBar(title: const Text('Camera Calibration Check')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -134,7 +134,9 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
                           const Text(
                             'Calibrating camera & posture framing (2s)...',
                             style: TextStyle(
-                                fontSize: 12, color: AppTheme.textLight),
+                              fontSize: 12,
+                              color: AppTheme.textLight,
+                            ),
                           ),
                         ],
                       ),
@@ -143,7 +145,9 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
                   if (_isReady)
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       decoration: BoxDecoration(
                         color: AppTheme.stateCorrect,
                         borderRadius: BorderRadius.circular(20),
@@ -151,8 +155,11 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
                       child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.check_circle,
-                              color: Colors.white, size: 20),
+                          Icon(
+                            Icons.check_circle,
+                            color: Colors.white,
+                            size: 20,
+                          ),
                           SizedBox(width: 8),
                           Text(
                             'READY FOR EXERCISE',

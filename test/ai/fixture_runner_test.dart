@@ -1,15 +1,16 @@
 // test/ai/fixture_runner_test.dart
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
-import 'package:physio_app/ai/holds/shoulder_hold_engine.dart';
-import 'package:physio_app/ai/reference/reference_analyzer.dart';
-import 'package:physio_app/ai/summary/session_summary_generator.dart';
-import 'package:physio_app/exercises/bicep_curl/bicep_curl_rule.dart';
-import 'package:physio_app/models/enums.dart';
-import 'package:physio_app/models/landmark.dart';
-import 'package:physio_app/models/movement_event.dart';
-import 'package:physio_app/models/reference_profile.dart';
+import 'package:motioncare/ai/holds/shoulder_hold_engine.dart';
+import 'package:motioncare/ai/reference/reference_analyzer.dart';
+import 'package:motioncare/ai/summary/session_summary_generator.dart';
+import 'package:motioncare/exercises/bicep_curl/bicep_curl_rule.dart';
+import 'package:motioncare/models/enums.dart';
+import 'package:motioncare/models/landmark.dart';
+import 'package:motioncare/models/movement_event.dart';
+import 'package:motioncare/models/reference_profile.dart';
 
 void main() {
   group('Specification v7 Section 38 Fixture Test Suite', () {
@@ -41,7 +42,10 @@ void main() {
       }
 
       expect(rule.repEngine.validReps, equals(data['expected']['validReps']));
-      expect(rule.repEngine.invalidAttempts, equals(data['expected']['invalidAttempts']));
+      expect(
+        rule.repEngine.invalidAttempts,
+        equals(data['expected']['invalidAttempts']),
+      );
       expect(rule.repEngine.phase.name, equals(data['expected']['finalPhase']));
     });
 
@@ -72,8 +76,14 @@ void main() {
       }
 
       expect(rule.repEngine.validReps, equals(data['expected']['validReps']));
-      expect(rule.repEngine.invalidAttempts, equals(data['expected']['invalidAttempts']));
-      expect(rule.repEngine.lastIssueCode.name, equals(data['expected']['issueCode']));
+      expect(
+        rule.repEngine.invalidAttempts,
+        equals(data['expected']['invalidAttempts']),
+      );
+      expect(
+        rule.repEngine.lastIssueCode.name,
+        equals(data['expected']['issueCode']),
+      );
     });
 
     test('curl_overshoot.json captures overshoot issue', () {
@@ -103,8 +113,14 @@ void main() {
       }
 
       expect(rule.repEngine.validReps, equals(data['expected']['validReps']));
-      expect(rule.repEngine.invalidAttempts, equals(data['expected']['invalidAttempts']));
-      expect(rule.repEngine.lastIssueCode.name, equals(data['expected']['issueCode']));
+      expect(
+        rule.repEngine.invalidAttempts,
+        equals(data['expected']['invalidAttempts']),
+      );
+      expect(
+        rule.repEngine.lastIssueCode.name,
+        equals(data['expected']['issueCode']),
+      );
     });
 
     test('curl_visibility_loss.json ensures visibility drop does not penalize patient', () {
@@ -140,7 +156,10 @@ void main() {
       }
 
       expect(rule.repEngine.validReps, equals(data['expected']['validReps']));
-      expect(rule.repEngine.invalidAttempts, equals(data['expected']['invalidAttempts']));
+      expect(
+        rule.repEngine.invalidAttempts,
+        equals(data['expected']['invalidAttempts']),
+      );
       expect(sawInsufficientVisibility, isTrue);
     });
 
@@ -160,11 +179,15 @@ void main() {
       final now = DateTime.now();
       final List<AngleSample> samples = [];
       for (final frame in data['frames']) {
-        samples.add(AngleSample(
-          timestamp: now.add(Duration(milliseconds: frame['timestampMs'] as int)),
-          angle: (frame['angle'] as num).toDouble(),
-          visibilityValid: frame['visibility'] as bool,
-        ));
+        samples.add(
+          AngleSample(
+            timestamp: now.add(
+              Duration(milliseconds: frame['timestampMs'] as int),
+            ),
+            angle: (frame['angle'] as num).toDouble(),
+            visibilityValid: frame['visibility'] as bool,
+          ),
+        );
       }
 
       final profile = analyzer.analyze(
@@ -172,8 +195,14 @@ void main() {
         exerciseId: data['exerciseId'],
       );
 
-      expect(profile.targetAngle, closeTo(data['expected']['extractedTargetApprox'], 2.0));
-      expect(profile.confidence, greaterThanOrEqualTo(data['expected']['minConfidence']));
+      expect(
+        profile.targetAngle,
+        closeTo(data['expected']['extractedTargetApprox'], 2.0),
+      );
+      expect(
+        profile.confidence,
+        greaterThanOrEqualTo(data['expected']['minConfidence']),
+      );
       expect(profile.isPlausible, equals(data['expected']['isPlausible']));
     });
 
@@ -193,11 +222,15 @@ void main() {
       final now = DateTime.now();
       final List<AngleSample> samples = [];
       for (final frame in data['frames']) {
-        samples.add(AngleSample(
-          timestamp: now.add(Duration(milliseconds: frame['timestampMs'] as int)),
-          angle: (frame['angle'] as num).toDouble(),
-          visibilityValid: frame['visibility'] as bool,
-        ));
+        samples.add(
+          AngleSample(
+            timestamp: now.add(
+              Duration(milliseconds: frame['timestampMs'] as int),
+            ),
+            angle: (frame['angle'] as num).toDouble(),
+            visibilityValid: frame['visibility'] as bool,
+          ),
+        );
       }
 
       final profile = analyzer.analyze(
@@ -205,7 +238,10 @@ void main() {
         exerciseId: data['exerciseId'],
       );
 
-      expect(profile.confidence, lessThanOrEqualTo(data['expected']['maxConfidence']));
+      expect(
+        profile.confidence,
+        lessThanOrEqualTo(data['expected']['maxConfidence']),
+      );
       expect(profile.isPlausible, equals(data['expected']['isPlausible']));
       expect(profile.reviewPrompt, contains('Re-recording required'));
     });
@@ -220,8 +256,12 @@ void main() {
 
       for (final tick in data['ticks']) {
         final double dur = (tick['durationSeconds'] as num).toDouble();
-        final aiState = AiState.values.firstWhere((e) => e.name == tick['aiState']);
-        final issue = IssueCode.values.firstWhere((e) => e.name == tick['issueCode']);
+        final aiState = AiState.values.firstWhere(
+          (e) => e.name == tick['aiState'],
+        );
+        final issue = IssueCode.values.firstWhere(
+          (e) => e.name == tick['issueCode'],
+        );
 
         engine.processTick(
           aiState: aiState,
@@ -230,9 +270,18 @@ void main() {
         );
       }
 
-      expect(engine.correctHoldSeconds, equals(data['expected']['correctHoldSeconds']));
-      expect(engine.incorrectHoldSeconds, equals(data['expected']['incorrectHoldSeconds']));
-      expect(engine.postureBreakCount, equals(data['expected']['postureBreaks']));
+      expect(
+        engine.correctHoldSeconds,
+        equals(data['expected']['correctHoldSeconds']),
+      );
+      expect(
+        engine.incorrectHoldSeconds,
+        equals(data['expected']['incorrectHoldSeconds']),
+      );
+      expect(
+        engine.postureBreakCount,
+        equals(data['expected']['postureBreaks']),
+      );
       expect(engine.recoveryCount, equals(data['expected']['recoveries']));
       expect(engine.isCompleted, equals(data['expected']['isCompleted']));
     });
@@ -244,14 +293,18 @@ void main() {
       final List<RepEvent> reps = [];
       final now = DateTime.now();
       for (final r in data['reps']) {
-        reps.add(RepEvent(
-          repIndex: r['repIndex'] as int,
-          isValid: r['isValid'] as bool,
-          peakAngle: (r['peakAngle'] as num).toDouble(),
-          targetAngle: (r['targetAngle'] as num).toDouble(),
-          issueCode: IssueCode.values.firstWhere((e) => e.name == r['issueCode']),
-          timestamp: now,
-        ));
+        reps.add(
+          RepEvent(
+            repIndex: r['repIndex'] as int,
+            isValid: r['isValid'] as bool,
+            peakAngle: (r['peakAngle'] as num).toDouble(),
+            targetAngle: (r['targetAngle'] as num).toDouble(),
+            issueCode: IssueCode.values.firstWhere(
+              (e) => e.name == r['issueCode'],
+            ),
+            timestamp: now,
+          ),
+        );
       }
 
       final summary = SessionSummaryGenerator.generate(
@@ -259,20 +312,26 @@ void main() {
         planId: data['planId'],
         patientId: data['patientId'],
         exerciseName: data['exerciseName'],
-        exerciseType: ExerciseType.values.firstWhere((e) => e.name == data['exerciseType']),
+        exerciseType: ExerciseType.values.firstWhere(
+          (e) => e.name == data['exerciseType'],
+        ),
         prescribedReps: data['prescribedReps'] as int,
         validReps: data['expected']['validReps'] as int,
         invalidAttempts: data['expected']['invalidAttempts'] as int,
         targetHoldSeconds: 0.0,
         correctHoldSeconds: 0.0,
         incorrectHoldSeconds: 0.0,
-        visibilityLossSeconds: (data['visibilityLossSeconds'] as num).toDouble(),
+        visibilityLossSeconds: (data['visibilityLossSeconds'] as num)
+            .toDouble(),
         events: const [],
         repEvents: reps,
       );
 
       expect(summary.validReps, equals(data['expected']['validReps']));
-      expect(summary.invalidAttempts, equals(data['expected']['invalidAttempts']));
+      expect(
+        summary.invalidAttempts,
+        equals(data['expected']['invalidAttempts']),
+      );
       expect(summary.accuracyPercentage, equals(data['expected']['accuracy']));
       expect(summary.commonIssue.name, equals(data['expected']['commonIssue']));
     });

@@ -52,23 +52,24 @@ class ReferenceProfile {
       },
       isClinicianOverride: true,
       isPlausible: true,
-      reviewPrompt: 'Clinician Override: Manually set to ${newTargetAngle.toStringAsFixed(1)}°',
+      reviewPrompt:
+          'Clinician Override: Manually set to ${newTargetAngle.toStringAsFixed(1)}°',
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'exerciseId': exerciseId,
-        'targetAngle': targetAngle,
-        'tolerance': tolerance,
-        'confidence': confidence,
-        'movementPhases': movementPhases.map((e) => e.name).toList(),
-        'bodySide': bodySide.name,
-        'extractionMethod': extractionMethod.name,
-        'qualityMetadata': qualityMetadata,
-        'isClinicianOverride': isClinicianOverride,
-        'isPlausible': isPlausible,
-        'reviewPrompt': reviewPrompt,
-      };
+    'exerciseId': exerciseId,
+    'targetAngle': targetAngle,
+    'tolerance': tolerance,
+    'confidence': confidence,
+    'movementPhases': movementPhases.map((e) => e.name).toList(),
+    'bodySide': bodySide.name,
+    'extractionMethod': extractionMethod.name,
+    'qualityMetadata': qualityMetadata,
+    'isClinicianOverride': isClinicianOverride,
+    'isPlausible': isPlausible,
+    'reviewPrompt': reviewPrompt,
+  };
 
   factory ReferenceProfile.fromJson(Map<String, dynamic> json) =>
       ReferenceProfile(
@@ -76,11 +77,14 @@ class ReferenceProfile {
         targetAngle: (json['targetAngle'] as num).toDouble(),
         tolerance: (json['tolerance'] as num?)?.toDouble() ?? 12.0,
         confidence: (json['confidence'] as num).toDouble(),
-        movementPhases: (json['movementPhases'] as List<dynamic>?)
-                ?.map((e) => MovementPhase.values.firstWhere(
-                      (m) => m.name == e,
-                      orElse: () => MovementPhase.moving,
-                    ))
+        movementPhases:
+            (json['movementPhases'] as List<dynamic>?)
+                ?.map(
+                  (e) => MovementPhase.values.firstWhere(
+                    (m) => m.name == e,
+                    orElse: () => MovementPhase.moving,
+                  ),
+                )
                 .toList() ??
             const [
               MovementPhase.start,

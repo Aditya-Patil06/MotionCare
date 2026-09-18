@@ -2,6 +2,7 @@
 // Specification v7 Section 7, 27, 28: Firestore Persistence Service with Clinician Workflow
 
 import 'package:flutter/foundation.dart';
+
 import '../../models/enums.dart';
 import '../../models/patient_health_profile.dart';
 import '../../models/plan.dart';
@@ -26,14 +27,13 @@ class FirestoreService extends ChangeNotifier {
       patientId: 'pat_alex_rivera',
       patientName: 'Alex Rivera',
       age: 28,
-      conditionNotes:
-          'Mild distal biceps tendinopathy following repetitive eccentric strain during tennis serve.',
+      conditionNotes: 'Mild distal biceps tendinopathy following repetitive eccentric strain during tennis serve.',
       affectedBodyPart: 'Right Elbow / Biceps',
       limitations: 'Avoid rapid terminal extension under high load.',
       previousHistory: 'No prior surgical history. Conservative physical therapy completed 2 years ago.',
-      currentSymptoms: 'Stiffness and mild discomfort during late flexion (VAS 3/10).',
-      clinicianNotes:
-          'Focus on slow, controlled concentric-eccentric repetitions. Strict form monitoring required.',
+      currentSymptoms:
+          'Stiffness and mild discomfort during late flexion (VAS 3/10).',
+      clinicianNotes: 'Focus on slow, controlled concentric-eccentric repetitions. Strict form monitoring required.',
       assessmentNotes: 'Initial intake baseline assessment completed.',
       updatedAt: DateTime.now().subtract(const Duration(days: 2)),
     );
@@ -44,14 +44,12 @@ class FirestoreService extends ChangeNotifier {
       patientId: 'pat_maya_lin',
       patientName: 'Maya Lin',
       age: 34,
-      conditionNotes:
-          'Post-arthroscopic subacromial decompression rehabilitation. Strengthening rotator cuff and deltoid stability.',
+      conditionNotes: 'Post-arthroscopic subacromial decompression rehabilitation. Strengthening rotator cuff and deltoid stability.',
       affectedBodyPart: 'Left Shoulder / Rotator Cuff',
       limitations: 'Limit active abduction to 90 degrees initially. Avoid abrupt overhead jerks.',
       previousHistory: 'Rotator cuff repair performed 8 weeks ago. Phase 2 physical therapy underway.',
       currentSymptoms: 'Mild fatigue on sustained lateral hold (VAS 2/10). No acute sharp pain.',
-      clinicianNotes:
-          'Prescribe isometric shoulder raise holds at 60-80 degrees. Pacing and posture alignment are key.',
+      clinicianNotes: 'Prescribe isometric shoulder raise holds at 60-80 degrees. Pacing and posture alignment are key.',
       assessmentNotes: 'Week 8 post-op check passed with good passive ROM.',
       updatedAt: DateTime.now().subtract(const Duration(days: 1)),
     );
@@ -62,13 +60,13 @@ class FirestoreService extends ChangeNotifier {
       patientId: 'pat_david_kim',
       patientName: 'David Kim',
       age: 42,
-      conditionNotes:
-          'Lateral epicondylitis (tennis elbow) with associated forearm flexor weakness from computer ergonomics.',
+      conditionNotes: 'Lateral epicondylitis (tennis elbow) with associated forearm flexor weakness from computer ergonomics.',
       affectedBodyPart: 'Right Arm / Forearm',
       limitations: 'Avoid heavy isometric grip loading.',
       previousHistory: 'Conservative management for 3 months.',
       currentSymptoms: 'Dull ache after extended mouse usage.',
-      clinicianNotes: 'Focus on eccentric bicep curling and wrist extensor integration.',
+      clinicianNotes:
+          'Focus on eccentric bicep curling and wrist extensor integration.',
       assessmentNotes: 'Grip strength at 85% of unaffected limb.',
       updatedAt: DateTime.now().subtract(const Duration(hours: 12)),
     );
@@ -107,20 +105,20 @@ class FirestoreService extends ChangeNotifier {
       invalidAttempts: 2,
       accuracyPercentage: 80.0,
       commonIssue: IssueCode.incompleteMovement,
-      aiSummaryText:
-          'Patient completed 8 valid repetitions out of 10 prescribed repetitions. 2 attempts were incomplete and did not reach the target angle. Movement consistency remained stable for completed curls.',
-      clinicianReviewSuggestion:
-          'Consider reviewing whether movement range decreases during later repetitions.',
+      aiSummaryText: 'Patient completed 8 valid repetitions out of 10 prescribed repetitions. 2 attempts were incomplete and did not reach the target angle. Movement consistency remained stable for completed curls.',
+      clinicianReviewSuggestion: 'Consider reviewing whether movement range decreases during later repetitions.',
       createdAt: DateTime.now().subtract(const Duration(days: 1)),
     );
-    _sessions.add(SessionRecord(
-      id: 'sess_prev_001',
-      planId: initialPlan.id,
-      patientId: 'pat_alex_rivera',
-      exerciseId: 'bicep_curl',
-      summary: baselineSummary,
-      events: const [],
-    ));
+    _sessions.add(
+      SessionRecord(
+        id: 'sess_prev_001',
+        planId: initialPlan.id,
+        patientId: 'pat_alex_rivera',
+        exerciseId: 'bicep_curl',
+        summary: baselineSummary,
+        events: const [],
+      ),
+    );
   }
 
   // --- Patient Operations ---

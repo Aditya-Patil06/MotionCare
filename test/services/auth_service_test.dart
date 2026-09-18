@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:physio_app/models/user.dart';
-import 'package:physio_app/services/auth/auth_service.dart';
+import 'package:motioncare/models/user.dart';
+import 'package:motioncare/services/auth/auth_service.dart';
 
 void main() {
   setUp(() {
@@ -41,8 +41,14 @@ void main() {
       expect(auth.currentUser?.id, equals('pat_custom_123'));
 
       final prefs = await SharedPreferences.getInstance();
-      expect(prefs.getString('auth_active_role'), equals(UserRole.patient.name));
-      expect(prefs.getString('auth_active_patient_id'), equals('pat_custom_123'));
+      expect(
+        prefs.getString('auth_active_role'),
+        equals(UserRole.patient.name),
+      );
+      expect(
+        prefs.getString('auth_active_patient_id'),
+        equals('pat_custom_123'),
+      );
 
       // Simulate app restart
       final restoredAuth = AuthService();

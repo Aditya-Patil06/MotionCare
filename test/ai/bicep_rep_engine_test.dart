@@ -1,8 +1,8 @@
 // test/ai/bicep_rep_engine_test.dart
 import 'package:flutter_test/flutter_test.dart';
-import 'package:physio_app/ai/reps/bicep_rep_engine.dart';
-import 'package:physio_app/models/enums.dart';
-import 'package:physio_app/models/reference_profile.dart';
+import 'package:motioncare/ai/reps/bicep_rep_engine.dart';
+import 'package:motioncare/models/enums.dart';
+import 'package:motioncare/models/reference_profile.dart';
 
 void main() {
   group('BicepRepEngine Rep Validation State Machine', () {
@@ -22,7 +22,17 @@ void main() {
       final now = DateTime.now();
 
       // Cycle: 160 -> 140 (flexing) -> 50 (peak) -> 120 (returning) -> 160 (idle)
-      final angles = [160.0, 140.0, 100.0, 70.0, 50.0, 52.0, 90.0, 130.0, 155.0];
+      final angles = [
+        160.0,
+        140.0,
+        100.0,
+        70.0,
+        50.0,
+        52.0,
+        90.0,
+        130.0,
+        155.0,
+      ];
 
       for (int i = 0; i < angles.length; i++) {
         final event = engine.processSample(
@@ -44,32 +54,35 @@ void main() {
       expect(engine.phase, equals(RepPhase.idle));
     });
 
-    test('Incomplete repetition does NOT count as valid and logs invalid attempt', () {
-      final now = DateTime.now();
+    test(
+      'Incomplete repetition does NOT count as valid and logs invalid attempt',
+      () {
+        final now = DateTime.now();
 
-      // Cycle: 160 -> 130 (flexing) -> 80 (only reaches 80°, misses 45±12° target) -> returns to 150
-      final angles = [160.0, 140.0, 120.0, 80.0, 90.0, 120.0, 150.0];
+        // Cycle: 160 -> 130 (flexing) -> 80 (only reaches 80°, misses 45±12° target) -> returns to 150
+        final angles = [160.0, 140.0, 120.0, 80.0, 90.0, 120.0, 150.0];
 
-      for (int i = 0; i < angles.length; i++) {
-        final event = engine.processSample(
-          currentAngle: angles[i],
-          profile: profile,
-          isVisibilityValid: true,
-          timestamp: now.add(Duration(milliseconds: i * 100)),
-        );
+        for (int i = 0; i < angles.length; i++) {
+          final event = engine.processSample(
+            currentAngle: angles[i],
+            profile: profile,
+            isVisibilityValid: true,
+            timestamp: now.add(Duration(milliseconds: i * 100)),
+          );
 
-        if (i == angles.length - 1) {
-          expect(event, isNotNull);
-          expect(event!.isValid, isFalse);
-          expect(event.issueCode, equals(IssueCode.incompleteMovement));
+          if (i == angles.length - 1) {
+            expect(event, isNotNull);
+            expect(event!.isValid, isFalse);
+            expect(event.issueCode, equals(IssueCode.incompleteMovement));
+          }
         }
-      }
 
-      expect(engine.validReps, equals(0));
-      expect(engine.invalidAttempts, equals(1));
-      expect(engine.lastIssueCode, equals(IssueCode.incompleteMovement));
-      expect(engine.phase, equals(RepPhase.idle));
-    });
+        expect(engine.validReps, equals(0));
+        expect(engine.invalidAttempts, equals(1));
+        expect(engine.lastIssueCode, equals(IssueCode.incompleteMovement));
+        expect(engine.phase, equals(RepPhase.idle));
+      },
+    );
 
     test('Overshoot past target tolerance flags overshoot issue', () {
       final now = DateTime.now();
@@ -124,7 +137,11 @@ void main() {
       );
 
       expect(event, isNull);
-      expect(engine.invalidAttempts, equals(0), reason: 'Visibility loss must never punish the patient');
+      expect(
+        engine.invalidAttempts,
+        equals(0),
+        reason: 'Visibility loss must never punish the patient',
+      );
       expect(engine.lastIssueCode, equals(IssueCode.insufficientVisibility));
     });
 
@@ -133,7 +150,16 @@ void main() {
       int timestampMs = 0;
 
       void performCurl(double peakAngle) {
-        final cycle = [160.0, 130.0, 80.0, peakAngle, peakAngle, 80.0, 130.0, 155.0];
+        final cycle = [
+          160.0,
+          130.0,
+          80.0,
+          peakAngle,
+          peakAngle,
+          80.0,
+          130.0,
+          155.0,
+        ];
         for (final a in cycle) {
           engine.processSample(
             currentAngle: a,

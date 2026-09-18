@@ -32,11 +32,11 @@ class BicepCurlRule implements ExerciseRule {
 
   @override
   BiomechanicsBounds get bounds => const BiomechanicsBounds(
-        minPlausibleAngle: 20.0,
-        maxPlausibleAngle: 180.0,
-        targetMinAngle: 25.0,
-        targetMaxAngle: 110.0,
-      );
+    minPlausibleAngle: 20.0,
+    maxPlausibleAngle: 180.0,
+    targetMinAngle: 25.0,
+    targetMaxAngle: 110.0,
+  );
 
   @override
   JointDefinition get jointDefinition {
@@ -139,10 +139,7 @@ class BicepCurlRule implements ExerciseRule {
   }
 
   @override
-  RepEvent? detectRep(
-    List<AngleSample> history,
-    ReferenceProfile profile,
-  ) {
+  RepEvent? detectRep(List<AngleSample> history, ReferenceProfile profile) {
     if (history.isEmpty) return null;
     final latest = history.last;
     return _repEngine.processSample(

@@ -2,6 +2,7 @@
 // Specification v7 Section 2.2 & 30: Patient Session Result Screen
 
 import 'package:flutter/material.dart';
+
 import '../../core/constants.dart';
 import '../../core/theme.dart';
 import '../../models/session.dart';
@@ -31,7 +32,10 @@ class SessionResultScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppTheme.stateCorrect.withOpacity(0.12),
                 shape: BoxShape.circle,
-                border: Border.all(color: AppTheme.stateCorrect.withOpacity(0.3), width: 1.5),
+                border: Border.all(
+                  color: AppTheme.stateCorrect.withOpacity(0.3),
+                  width: 1.5,
+                ),
               ),
               child: const Icon(
                 Icons.check_circle_outline_rounded,
@@ -94,8 +98,11 @@ class SessionResultScreen extends StatelessWidget {
                 children: [
                   const Row(
                     children: [
-                      Icon(Icons.auto_awesome_rounded,
-                          color: AppTheme.primaryTeal, size: 18),
+                      Icon(
+                        Icons.auto_awesome_rounded,
+                        color: AppTheme.primaryTeal,
+                        size: 18,
+                      ),
                       SizedBox(width: 8),
                       Text(
                         'Movement Summary',
@@ -132,7 +139,11 @@ class SessionResultScreen extends StatelessWidget {
               ),
               child: const Text(
                 AppConstants.clinicalScopeBoundaryStatement,
-                style: TextStyle(fontSize: 11, color: AppTheme.textMuted, height: 1.35),
+                style: TextStyle(
+                  fontSize: 11,
+                  color: AppTheme.textMuted,
+                  height: 1.35,
+                ),
                 textAlign: TextAlign.center,
               ),
             ),

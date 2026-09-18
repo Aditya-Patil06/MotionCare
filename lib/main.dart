@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+
 import 'auth/login_screen.dart';
 import 'core/theme.dart';
 import 'doctor/dashboard/doctor_dashboard.dart';
@@ -13,14 +14,12 @@ import 'services/firestore/firestore_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-  ]);
-  runApp(const PhysioApp());
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  runApp(const MotionCareApp());
 }
 
-class PhysioApp extends StatelessWidget {
-  const PhysioApp({super.key});
+class MotionCareApp extends StatelessWidget {
+  const MotionCareApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -58,3 +57,5 @@ class AuthGate extends StatelessWidget {
   }
 }
 
+/// Backward compatible alias for [MotionCareApp].
+typedef PhysioApp = MotionCareApp;

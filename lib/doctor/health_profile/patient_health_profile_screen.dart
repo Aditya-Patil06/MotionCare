@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../core/constants.dart';
 import '../../core/theme.dart';
 import '../../models/patient_health_profile.dart';
@@ -33,7 +34,8 @@ class _PatientHealthProfileScreenState
   void initState() {
     super.initState();
     final firestore = context.read<FirestoreService>();
-    final profile = firestore.getHealthProfile(widget.patientId) ??
+    final profile =
+        firestore.getHealthProfile(widget.patientId) ??
         PatientHealthProfile(
           patientId: widget.patientId,
           patientName: 'Demo Patient',
@@ -49,14 +51,12 @@ class _PatientHealthProfileScreenState
 
     _conditionController = TextEditingController(text: profile.conditionNotes);
     _bodyPartController = TextEditingController(text: profile.affectedBodyPart);
-    _limitationsController =
-        TextEditingController(text: profile.limitations);
-    _historyController =
-        TextEditingController(text: profile.previousHistory);
-    _symptomsController =
-        TextEditingController(text: profile.currentSymptoms);
-    _clinicianNotesController =
-        TextEditingController(text: profile.clinicianNotes);
+    _limitationsController = TextEditingController(text: profile.limitations);
+    _historyController = TextEditingController(text: profile.previousHistory);
+    _symptomsController = TextEditingController(text: profile.currentSymptoms);
+    _clinicianNotesController = TextEditingController(
+      text: profile.clinicianNotes,
+    );
   }
 
   @override
@@ -75,28 +75,29 @@ class _PatientHealthProfileScreenState
     final firestore = context.read<FirestoreService>();
     final existing = firestore.getHealthProfile(widget.patientId);
 
-    final updated = (existing ??
-            PatientHealthProfile(
-              patientId: widget.patientId,
-              patientName: 'Demo Patient',
-              age: 30,
-              conditionNotes: '',
-              affectedBodyPart: '',
-              limitations: '',
-              previousHistory: '',
-              currentSymptoms: '',
-              clinicianNotes: '',
+    final updated =
+        (existing ??
+                PatientHealthProfile(
+                  patientId: widget.patientId,
+                  patientName: 'Demo Patient',
+                  age: 30,
+                  conditionNotes: '',
+                  affectedBodyPart: '',
+                  limitations: '',
+                  previousHistory: '',
+                  currentSymptoms: '',
+                  clinicianNotes: '',
+                  updatedAt: DateTime.now(),
+                ))
+            .copyWith(
+              conditionNotes: _conditionController.text,
+              affectedBodyPart: _bodyPartController.text,
+              limitations: _limitationsController.text,
+              previousHistory: _historyController.text,
+              currentSymptoms: _symptomsController.text,
+              clinicianNotes: _clinicianNotesController.text,
               updatedAt: DateTime.now(),
-            ))
-        .copyWith(
-      conditionNotes: _conditionController.text,
-      affectedBodyPart: _bodyPartController.text,
-      limitations: _limitationsController.text,
-      previousHistory: _historyController.text,
-      currentSymptoms: _symptomsController.text,
-      clinicianNotes: _clinicianNotesController.text,
-      updatedAt: DateTime.now(),
-    );
+            );
 
     await firestore.updateHealthProfile(updated);
     setState(() => _isSaving = false);
@@ -144,13 +145,18 @@ class _PatientHealthProfileScreenState
               decoration: BoxDecoration(
                 color: AppTheme.cardBg,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppTheme.primaryTeal.withOpacity(0.4)),
+                border: Border.all(
+                  color: AppTheme.primaryTeal.withOpacity(0.4),
+                ),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.verified_user,
-                      color: AppTheme.primaryTeal, size: 22),
+                  const Icon(
+                    Icons.verified_user,
+                    color: AppTheme.primaryTeal,
+                    size: 22,
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(

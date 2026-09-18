@@ -6,10 +6,12 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math' as math;
+
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
+
 import '../../ai/angles/joint_angle_engine.dart';
 import '../../core/theme.dart';
 import '../../models/enums.dart';
@@ -34,7 +36,8 @@ class DoctorRecordVideoScreen extends StatefulWidget {
   });
 
   @override
-  State<DoctorRecordVideoScreen> createState() => _DoctorRecordVideoScreenState();
+  State<DoctorRecordVideoScreen> createState() =>
+      _DoctorRecordVideoScreenState();
 }
 
 class _DoctorRecordVideoScreenState extends State<DoctorRecordVideoScreen> {
@@ -177,18 +180,44 @@ class _DoctorRecordVideoScreenState extends State<DoctorRecordVideoScreen> {
     } else {
       activeElbowX = activeShoulderX;
       activeElbowY = shoulderY + 0.22;
-      activeWristX = activeElbowX + (isLeft ? -1.0 : 1.0) * 0.20 * math.sin(math.pi - angleRad);
+      activeWristX =
+          activeElbowX +
+          (isLeft ? -1.0 : 1.0) * 0.20 * math.sin(math.pi - angleRad);
       activeWristY = activeElbowY + 0.20 * math.cos(math.pi - angleRad);
     }
 
     return {
-      '${prefix}_shoulder': Landmark(x: activeShoulderX, y: shoulderY, likelihood: 0.98),
-      '${prefix}_elbow': Landmark(x: activeElbowX, y: activeElbowY, likelihood: 0.95),
-      '${prefix}_wrist': Landmark(x: activeWristX, y: activeWristY, likelihood: 0.94),
+      '${prefix}_shoulder': Landmark(
+        x: activeShoulderX,
+        y: shoulderY,
+        likelihood: 0.98,
+      ),
+      '${prefix}_elbow': Landmark(
+        x: activeElbowX,
+        y: activeElbowY,
+        likelihood: 0.95,
+      ),
+      '${prefix}_wrist': Landmark(
+        x: activeWristX,
+        y: activeWristY,
+        likelihood: 0.94,
+      ),
       '${prefix}_hip': Landmark(x: activeShoulderX, y: hipY, likelihood: 0.92),
-      '${oppPrefix}_shoulder': Landmark(x: oppShoulderX, y: shoulderY, likelihood: 0.90),
-      '${oppPrefix}_elbow': Landmark(x: oppShoulderX, y: shoulderY + 0.22, likelihood: 0.90),
-      '${oppPrefix}_wrist': Landmark(x: oppShoulderX, y: shoulderY + 0.42, likelihood: 0.88),
+      '${oppPrefix}_shoulder': Landmark(
+        x: oppShoulderX,
+        y: shoulderY,
+        likelihood: 0.90,
+      ),
+      '${oppPrefix}_elbow': Landmark(
+        x: oppShoulderX,
+        y: shoulderY + 0.22,
+        likelihood: 0.90,
+      ),
+      '${oppPrefix}_wrist': Landmark(
+        x: oppShoulderX,
+        y: shoulderY + 0.42,
+        likelihood: 0.88,
+      ),
       '${oppPrefix}_hip': Landmark(x: oppShoulderX, y: hipY, likelihood: 0.90),
     };
   }
@@ -213,7 +242,8 @@ class _DoctorRecordVideoScreenState extends State<DoctorRecordVideoScreen> {
       }
     }
 
-    final bool inTarget = (angle >= (widget.targetAngle - widget.tolerance)) &&
+    final bool inTarget =
+        (angle >= (widget.targetAngle - widget.tolerance)) &&
         (angle <= (widget.targetAngle + widget.tolerance));
 
     setState(() {
@@ -225,7 +255,8 @@ class _DoctorRecordVideoScreenState extends State<DoctorRecordVideoScreen> {
 
   Future<void> _toggleCamera() async {
     if (_availableCameras.length < 2 || _isRecording) return;
-    _selectedCameraIndex = (_selectedCameraIndex + 1) % _availableCameras.length;
+    _selectedCameraIndex =
+        (_selectedCameraIndex + 1) % _availableCameras.length;
     await _startCameraController(_availableCameras[_selectedCameraIndex]);
   }
 
@@ -256,9 +287,9 @@ class _DoctorRecordVideoScreenState extends State<DoctorRecordVideoScreen> {
       });
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error starting recording: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error starting recording: $e')));
       }
     }
   }
@@ -286,9 +317,9 @@ class _DoctorRecordVideoScreenState extends State<DoctorRecordVideoScreen> {
     } catch (e) {
       if (mounted) {
         setState(() => _isRecording = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error stopping recording: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error stopping recording: $e')));
       }
     }
   }
@@ -319,7 +350,9 @@ class _DoctorRecordVideoScreenState extends State<DoctorRecordVideoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isFront = _cameraController?.description.lensDirection == CameraLensDirection.front;
+    final bool isFront =
+        _cameraController?.description.lensDirection ==
+        CameraLensDirection.front;
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -327,9 +360,14 @@ class _DoctorRecordVideoScreenState extends State<DoctorRecordVideoScreen> {
         title: Text('Record Demo: ${widget.exerciseName}'),
         backgroundColor: Colors.black87,
         actions: [
-          if (_previewVideoController == null && _availableCameras.length > 1 && !_isRecording)
+          if (_previewVideoController == null &&
+              _availableCameras.length > 1 &&
+              !_isRecording)
             IconButton(
-              icon: const Icon(Icons.flip_camera_ios, color: AppTheme.primaryTeal),
+              icon: const Icon(
+                Icons.flip_camera_ios,
+                color: AppTheme.primaryTeal,
+              ),
               tooltip: 'Switch Camera',
               onPressed: _toggleCamera,
             ),
@@ -339,7 +377,8 @@ class _DoctorRecordVideoScreenState extends State<DoctorRecordVideoScreen> {
         fit: StackFit.expand,
         children: [
           // 1. Camera Stream or Video Preview Player
-          if (_previewVideoController != null && _previewVideoController!.value.isInitialized)
+          if (_previewVideoController != null &&
+              _previewVideoController!.value.isInitialized)
             Center(
               child: AspectRatio(
                 aspectRatio: _previewVideoController!.value.aspectRatio,
@@ -355,12 +394,20 @@ class _DoctorRecordVideoScreenState extends State<DoctorRecordVideoScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.videocam_outlined, size: 54, color: AppTheme.primaryTeal),
+                    const Icon(
+                      Icons.videocam_outlined,
+                      size: 54,
+                      color: AppTheme.primaryTeal,
+                    ),
                     const SizedBox(height: 12),
                     Text(
-                      _cameraErrorMessage ?? 'Initializing camera guidelines...',
+                      _cameraErrorMessage ??
+                          'Initializing camera guidelines...',
                       textAlign: TextAlign.center,
-                      style: const TextStyle(color: AppTheme.textMuted, fontSize: 13),
+                      style: const TextStyle(
+                        color: AppTheme.textMuted,
+                        fontSize: 13,
+                      ),
                     ),
                   ],
                 ),
@@ -390,20 +437,29 @@ class _DoctorRecordVideoScreenState extends State<DoctorRecordVideoScreen> {
               left: 16,
               right: 16,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.black.withOpacity(0.75),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: _currentAiState == AiState.correct ? AppTheme.stateCorrect : AppTheme.primaryTeal,
+                    color: _currentAiState == AiState.correct
+                        ? AppTheme.stateCorrect
+                        : AppTheme.primaryTeal,
                     width: 1.5,
                   ),
                 ),
                 child: Row(
                   children: [
                     Icon(
-                      _currentAiState == AiState.correct ? Icons.check_circle : Icons.accessibility_new,
-                      color: _currentAiState == AiState.correct ? AppTheme.stateCorrect : AppTheme.primaryAccent,
+                      _currentAiState == AiState.correct
+                          ? Icons.check_circle
+                          : Icons.accessibility_new,
+                      color: _currentAiState == AiState.correct
+                          ? AppTheme.stateCorrect
+                          : AppTheme.primaryAccent,
                       size: 22,
                     ),
                     const SizedBox(width: 12),
@@ -423,7 +479,9 @@ class _DoctorRecordVideoScreenState extends State<DoctorRecordVideoScreen> {
                           Text(
                             'Live Measured: ${_currentAngle.toStringAsFixed(1)}°',
                             style: TextStyle(
-                              color: _currentAiState == AiState.correct ? AppTheme.stateCorrect : AppTheme.textMuted,
+                              color: _currentAiState == AiState.correct
+                                  ? AppTheme.stateCorrect
+                                  : AppTheme.textMuted,
                               fontSize: 12,
                             ),
                           ),
@@ -432,7 +490,10 @@ class _DoctorRecordVideoScreenState extends State<DoctorRecordVideoScreen> {
                     ),
                     if (_isRecording)
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.red.withOpacity(0.85),
                           borderRadius: BorderRadius.circular(12),
@@ -440,7 +501,11 @@ class _DoctorRecordVideoScreenState extends State<DoctorRecordVideoScreen> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.fiber_manual_record, color: Colors.white, size: 12),
+                            const Icon(
+                              Icons.fiber_manual_record,
+                              color: Colors.white,
+                              size: 12,
+                            ),
                             const SizedBox(width: 6),
                             Text(
                               '00:${_recordingSeconds.toString().padLeft(2, '0')}',
@@ -503,7 +568,8 @@ class _DoctorRecordVideoScreenState extends State<DoctorRecordVideoScreen> {
                 color: _isRecording ? Colors.red : AppTheme.primaryTeal,
                 boxShadow: [
                   BoxShadow(
-                    color: (_isRecording ? Colors.red : AppTheme.primaryTeal).withOpacity(0.5),
+                    color: (_isRecording ? Colors.red : AppTheme.primaryTeal)
+                        .withOpacity(0.5),
                     blurRadius: 12,
                     spreadRadius: 2,
                   ),

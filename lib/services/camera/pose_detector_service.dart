@@ -1,7 +1,9 @@
 import 'dart:ui';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
+
 import '../../models/landmark.dart';
 
 class PoseDetectorService {
@@ -50,7 +52,9 @@ class PoseDetectorService {
   }
 
   /// Processes an InputImage directly (e.g. from reference video or static frame)
-  Future<Map<String, Landmark>?> processInputImage(InputImage inputImage) async {
+  Future<Map<String, Landmark>?> processInputImage(
+    InputImage inputImage,
+  ) async {
     try {
       final List<Pose> poses = await _detector.processImage(inputImage);
       if (poses.isEmpty) return <String, Landmark>{};
@@ -100,7 +104,7 @@ class PoseDetectorService {
       final sensorOrientation = camera.sensorOrientation;
       final imageRotation =
           InputImageRotationValue.fromRawValue(sensorOrientation) ??
-              InputImageRotation.rotation0deg;
+          InputImageRotation.rotation0deg;
 
       final format = InputImageFormatValue.fromRawValue(image.format.raw);
       if (format == null) {

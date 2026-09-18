@@ -44,54 +44,52 @@ class SessionSummary {
   });
 
   Map<String, dynamic> toJson() => {
-        'sessionId': sessionId,
-        'planId': planId,
-        'patientId': patientId,
-        'exerciseName': exerciseName,
-        'exerciseType': exerciseType.name,
-        'validReps': validReps,
-        'targetReps': targetReps,
-        'invalidAttempts': invalidAttempts,
-        'correctHoldSeconds': correctHoldSeconds,
-        'targetHoldSeconds': targetHoldSeconds,
-        'incorrectHoldSeconds': incorrectHoldSeconds,
-        'visibilityLossSeconds': visibilityLossSeconds,
-        'accuracyPercentage': accuracyPercentage,
-        'commonIssue': commonIssue.name,
-        'aiSummaryText': aiSummaryText,
-        'clinicianReviewSuggestion': clinicianReviewSuggestion,
-        'createdAt': createdAt.toIso8601String(),
-      };
+    'sessionId': sessionId,
+    'planId': planId,
+    'patientId': patientId,
+    'exerciseName': exerciseName,
+    'exerciseType': exerciseType.name,
+    'validReps': validReps,
+    'targetReps': targetReps,
+    'invalidAttempts': invalidAttempts,
+    'correctHoldSeconds': correctHoldSeconds,
+    'targetHoldSeconds': targetHoldSeconds,
+    'incorrectHoldSeconds': incorrectHoldSeconds,
+    'visibilityLossSeconds': visibilityLossSeconds,
+    'accuracyPercentage': accuracyPercentage,
+    'commonIssue': commonIssue.name,
+    'aiSummaryText': aiSummaryText,
+    'clinicianReviewSuggestion': clinicianReviewSuggestion,
+    'createdAt': createdAt.toIso8601String(),
+  };
 
   factory SessionSummary.fromJson(Map<String, dynamic> json) => SessionSummary(
-        sessionId: json['sessionId'] as String,
-        planId: json['planId'] as String,
-        patientId: json['patientId'] as String,
-        exerciseName: json['exerciseName'] as String,
-        exerciseType: ExerciseType.values.firstWhere(
-          (e) => e.name == json['exerciseType'],
-          orElse: () => ExerciseType.rep,
-        ),
-        validReps: json['validReps'] as int? ?? 0,
-        targetReps: json['targetReps'] as int? ?? 0,
-        invalidAttempts: json['invalidAttempts'] as int? ?? 0,
-        correctHoldSeconds:
-            (json['correctHoldSeconds'] as num?)?.toDouble() ?? 0.0,
-        targetHoldSeconds:
-            (json['targetHoldSeconds'] as num?)?.toDouble() ?? 0.0,
-        incorrectHoldSeconds:
-            (json['incorrectHoldSeconds'] as num?)?.toDouble() ?? 0.0,
-        visibilityLossSeconds:
-            (json['visibilityLossSeconds'] as num?)?.toDouble() ?? 0.0,
-        accuracyPercentage: (json['accuracyPercentage'] as num).toDouble(),
-        commonIssue: IssueCode.values.firstWhere(
-          (e) => e.name == json['commonIssue'],
-          orElse: () => IssueCode.none,
-        ),
-        aiSummaryText: json['aiSummaryText'] as String,
-        clinicianReviewSuggestion: json['clinicianReviewSuggestion'] as String,
-        createdAt: DateTime.parse(json['createdAt'] as String),
-      );
+    sessionId: json['sessionId'] as String,
+    planId: json['planId'] as String,
+    patientId: json['patientId'] as String,
+    exerciseName: json['exerciseName'] as String,
+    exerciseType: ExerciseType.values.firstWhere(
+      (e) => e.name == json['exerciseType'],
+      orElse: () => ExerciseType.rep,
+    ),
+    validReps: json['validReps'] as int? ?? 0,
+    targetReps: json['targetReps'] as int? ?? 0,
+    invalidAttempts: json['invalidAttempts'] as int? ?? 0,
+    correctHoldSeconds: (json['correctHoldSeconds'] as num?)?.toDouble() ?? 0.0,
+    targetHoldSeconds: (json['targetHoldSeconds'] as num?)?.toDouble() ?? 0.0,
+    incorrectHoldSeconds:
+        (json['incorrectHoldSeconds'] as num?)?.toDouble() ?? 0.0,
+    visibilityLossSeconds:
+        (json['visibilityLossSeconds'] as num?)?.toDouble() ?? 0.0,
+    accuracyPercentage: (json['accuracyPercentage'] as num).toDouble(),
+    commonIssue: IssueCode.values.firstWhere(
+      (e) => e.name == json['commonIssue'],
+      orElse: () => IssueCode.none,
+    ),
+    aiSummaryText: json['aiSummaryText'] as String,
+    clinicianReviewSuggestion: json['clinicianReviewSuggestion'] as String,
+    createdAt: DateTime.parse(json['createdAt'] as String),
+  );
 }
 
 class SessionRecord {
@@ -112,23 +110,24 @@ class SessionRecord {
   });
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'planId': planId,
-        'patientId': patientId,
-        'exerciseId': exerciseId,
-        'summary': summary.toJson(),
-        'events': events.map((e) => e.toJson()).toList(),
-      };
+    'id': id,
+    'planId': planId,
+    'patientId': patientId,
+    'exerciseId': exerciseId,
+    'summary': summary.toJson(),
+    'events': events.map((e) => e.toJson()).toList(),
+  };
 
   factory SessionRecord.fromJson(Map<String, dynamic> json) => SessionRecord(
-        id: json['id'] as String,
-        planId: json['planId'] as String,
-        patientId: json['patientId'] as String,
-        exerciseId: json['exerciseId'] as String,
-        summary: SessionSummary.fromJson(json['summary'] as Map<String, dynamic>),
-        events: (json['events'] as List<dynamic>?)
-                ?.map((e) => SessionEvent.fromJson(e as Map<String, dynamic>))
-                .toList() ??
-            const [],
-      );
+    id: json['id'] as String,
+    planId: json['planId'] as String,
+    patientId: json['patientId'] as String,
+    exerciseId: json['exerciseId'] as String,
+    summary: SessionSummary.fromJson(json['summary'] as Map<String, dynamic>),
+    events:
+        (json['events'] as List<dynamic>?)
+            ?.map((e) => SessionEvent.fromJson(e as Map<String, dynamic>))
+            .toList() ??
+        const [],
+  );
 }

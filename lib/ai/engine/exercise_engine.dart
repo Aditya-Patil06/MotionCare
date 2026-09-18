@@ -38,7 +38,8 @@ class ExerciseEngine {
     this.targetHoldSeconds = 60.0,
     VisibilityTracker? visibilityTracker,
   }) {
-    _visibilityTracker = visibilityTracker ??
+    _visibilityTracker =
+        visibilityTracker ??
         VisibilityTracker(
           confidenceThreshold: 0.60,
           failThreshold: 5,
@@ -77,7 +78,8 @@ class ExerciseEngine {
   }) {
     final double deltaSeconds;
     if (_lastFrameTime != null) {
-      deltaSeconds = (timestamp.difference(_lastFrameTime!).inMilliseconds) / 1000.0;
+      deltaSeconds =
+          (timestamp.difference(_lastFrameTime!).inMilliseconds) / 1000.0;
     } else {
       deltaSeconds = 0.1; // Default 10 FPS assumption for first frame
     }
@@ -178,7 +180,9 @@ class ExerciseEngine {
     } else if (rule.type == ExerciseType.hold && _holdEngine != null) {
       holdState = _holdEngine!.processTick(
         aiState: aiState,
-        issueCode: aiState == AiState.correct ? IssueCode.none : IssueCode.postureDeviation,
+        issueCode: aiState == AiState.correct
+            ? IssueCode.none
+            : IssueCode.postureDeviation,
         deltaSeconds: deltaSeconds,
       );
       currentIssue = holdState.issueCode;
@@ -188,18 +192,27 @@ class ExerciseEngine {
     }
 
     // Directional Feedback
-    final feedback = rule.getFeedback(currentAngle, profile, aiState, currentIssue);
+    final feedback = rule.getFeedback(
+      currentAngle,
+      profile,
+      aiState,
+      currentIssue,
+    );
 
     // Record Event
-    _sessionEvents.add(SessionEvent(
-      timestamp: timestamp,
-      aiState: aiState,
-      currentAngle: currentAngle,
-      targetAngle: profile.targetAngle,
-      issueCode: currentIssue,
-      repPhase: (rule is BicepCurlRule) ? (rule as BicepCurlRule).repEngine.phase : null,
-      durationSeconds: deltaSeconds,
-    ));
+    _sessionEvents.add(
+      SessionEvent(
+        timestamp: timestamp,
+        aiState: aiState,
+        currentAngle: currentAngle,
+        targetAngle: profile.targetAngle,
+        issueCode: currentIssue,
+        repPhase: (rule is BicepCurlRule)
+            ? (rule as BicepCurlRule).repEngine.phase
+            : null,
+        durationSeconds: deltaSeconds,
+      ),
+    );
 
     return EngineFrame(
       timestamp: timestamp,
@@ -239,7 +252,9 @@ class ExerciseEngine {
       targetHoldSeconds: targetHoldSeconds,
       correctHoldSeconds: _holdEngine?.correctHoldSeconds ?? 0.0,
       incorrectHoldSeconds: _holdEngine?.incorrectHoldSeconds ?? 0.0,
-      visibilityLossSeconds: _totalVisibilityLossSeconds + (_holdEngine?.visibilityLossSeconds ?? 0.0),
+      visibilityLossSeconds:
+          _totalVisibilityLossSeconds +
+          (_holdEngine?.visibilityLossSeconds ?? 0.0),
       events: _sessionEvents,
       repEvents: _repEvents,
     );

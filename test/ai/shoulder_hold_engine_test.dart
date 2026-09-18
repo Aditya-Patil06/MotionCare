@@ -1,7 +1,7 @@
 // test/ai/shoulder_hold_engine_test.dart
 import 'package:flutter_test/flutter_test.dart';
-import 'package:physio_app/ai/holds/shoulder_hold_engine.dart';
-import 'package:physio_app/models/enums.dart';
+import 'package:motioncare/ai/holds/shoulder_hold_engine.dart';
+import 'package:motioncare/models/enums.dart';
 
 void main() {
   group('ShoulderHoldEngine Hold Timer State Management', () {
@@ -29,33 +29,40 @@ void main() {
       expect(engine.postureBreakCount, equals(0));
     });
 
-    test('Posture deviation pauses timer without resetting accumulated time', () {
-      // 15 seconds correct
-      for (int i = 0; i < 15; i++) {
-        engine.processTick(
-          aiState: AiState.correct,
-          issueCode: IssueCode.none,
-          deltaSeconds: 1.0,
-        );
-      }
-      expect(engine.correctHoldSeconds, equals(15.0));
+    test(
+      'Posture deviation pauses timer without resetting accumulated time',
+      () {
+        // 15 seconds correct
+        for (int i = 0; i < 15; i++) {
+          engine.processTick(
+            aiState: AiState.correct,
+            issueCode: IssueCode.none,
+            deltaSeconds: 1.0,
+          );
+        }
+        expect(engine.correctHoldSeconds, equals(15.0));
 
-      // 5 seconds incorrect posture
-      for (int i = 0; i < 5; i++) {
-        final state = engine.processTick(
-          aiState: AiState.incorrect,
-          issueCode: IssueCode.angleTooLow,
-          deltaSeconds: 1.0,
-        );
-        expect(state.isHolding, isFalse);
-        expect(state.isPaused, isTrue);
-        expect(state.currentHoldSeconds, equals(15.0), reason: 'Timer must not reset on posture break');
-      }
+        // 5 seconds incorrect posture
+        for (int i = 0; i < 5; i++) {
+          final state = engine.processTick(
+            aiState: AiState.incorrect,
+            issueCode: IssueCode.angleTooLow,
+            deltaSeconds: 1.0,
+          );
+          expect(state.isHolding, isFalse);
+          expect(state.isPaused, isTrue);
+          expect(
+            state.currentHoldSeconds,
+            equals(15.0),
+            reason: 'Timer must not reset on posture break',
+          );
+        }
 
-      expect(engine.correctHoldSeconds, equals(15.0));
-      expect(engine.incorrectHoldSeconds, equals(5.0));
-      expect(engine.postureBreakCount, equals(1));
-    });
+        expect(engine.correctHoldSeconds, equals(15.0));
+        expect(engine.incorrectHoldSeconds, equals(5.0));
+        expect(engine.postureBreakCount, equals(1));
+      },
+    );
 
     test('Recovery resumes timer and tracks recovery event', () {
       // 10s correct -> 4s incorrect -> 10s correct (resumed)
@@ -111,7 +118,11 @@ void main() {
 
       expect(engine.correctHoldSeconds, equals(10.0));
       expect(engine.visibilityLossSeconds, equals(3.0));
-      expect(engine.incorrectHoldSeconds, equals(0.0), reason: 'Visibility loss is not movement error');
+      expect(
+        engine.incorrectHoldSeconds,
+        equals(0.0),
+        reason: 'Visibility loss is not movement error',
+      );
       expect(engine.postureBreakCount, equals(0));
     });
   });

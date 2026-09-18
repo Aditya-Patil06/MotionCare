@@ -3,6 +3,7 @@
 // Specification v7 Section 10: Angle = acos(clamp(dot(BA, BC) / (|BA| * |BC|), -1.0, 1.0)) in degrees.
 
 import 'dart:math' as math;
+
 import '../../models/landmark.dart';
 
 class JointAngleEngine {

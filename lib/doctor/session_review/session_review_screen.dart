@@ -2,6 +2,7 @@
 // Specification v7 Section 24, 25, 26: Clinician Session Review with AI Summary & Suggestion
 
 import 'package:flutter/material.dart';
+
 import '../../core/constants.dart';
 import '../../core/theme.dart';
 import '../../models/enums.dart';
@@ -18,9 +19,7 @@ class SessionReviewScreen extends StatelessWidget {
     final isRep = summary.exerciseType == ExerciseType.rep;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Clinical Session Review'),
-      ),
+      appBar: AppBar(title: const Text('Clinical Session Review')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -70,7 +69,9 @@ class SessionReviewScreen extends StatelessWidget {
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 6),
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: AppTheme.stateCorrect.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(8),
@@ -159,15 +160,20 @@ class SessionReviewScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppTheme.cardBg,
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: AppTheme.primaryTeal.withOpacity(0.3)),
+                border: Border.all(
+                  color: AppTheme.primaryTeal.withOpacity(0.3),
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Row(
                     children: [
-                      Icon(Icons.auto_awesome,
-                          color: AppTheme.primaryTeal, size: 18),
+                      Icon(
+                        Icons.auto_awesome,
+                        color: AppTheme.primaryTeal,
+                        size: 18,
+                      ),
                       SizedBox(width: 8),
                       Text(
                         'Observed Movement Pattern',
@@ -193,8 +199,11 @@ class SessionReviewScreen extends StatelessWidget {
                   // Clinician Review Suggestion (Section 24)
                   const Row(
                     children: [
-                      Icon(Icons.lightbulb_outline,
-                          color: AppTheme.stateInsufficientVisibility, size: 18),
+                      Icon(
+                        Icons.lightbulb_outline,
+                        color: AppTheme.stateInsufficientVisibility,
+                        size: 18,
+                      ),
                       SizedBox(width: 8),
                       Text(
                         'Clinician Review Suggestion',
@@ -255,8 +264,10 @@ class SessionReviewScreen extends StatelessWidget {
                   final e = sessionRecord.events[index];
                   return Container(
                     margin: const EdgeInsets.only(bottom: 8),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: AppTheme.cardBg,
                       borderRadius: BorderRadius.circular(8),
@@ -271,8 +282,8 @@ class SessionReviewScreen extends StatelessWidget {
                             color: e.aiState == AiState.correct
                                 ? AppTheme.stateCorrect
                                 : (e.aiState == AiState.incorrect
-                                    ? AppTheme.stateIncorrect
-                                    : AppTheme.stateInsufficientVisibility),
+                                      ? AppTheme.stateIncorrect
+                                      : AppTheme.stateInsufficientVisibility),
                           ),
                         ),
                         Text(
@@ -316,7 +327,10 @@ class SessionReviewScreen extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: const TextStyle(fontSize: 11, color: AppTheme.textMuted),
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: AppTheme.textMuted,
+                  ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),

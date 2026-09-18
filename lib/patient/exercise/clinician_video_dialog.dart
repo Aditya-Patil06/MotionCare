@@ -2,8 +2,10 @@
 // Specification v7 Section 16 & 29: Clinician Demonstration Video Playback for Patients
 
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
+
 import '../../core/theme.dart';
 import '../../models/enums.dart';
 import '../../models/plan.dart';
@@ -19,14 +21,16 @@ class ClinicianVideoDialog extends StatefulWidget {
     this.showStartButton = true,
   });
 
-  static Future<void> show(BuildContext context, ExercisePlan plan, {bool showStartButton = true}) {
+  static Future<void> show(
+    BuildContext context,
+    ExercisePlan plan, {
+    bool showStartButton = true,
+  }) {
     return showDialog(
       context: context,
       barrierDismissible: true,
-      builder: (_) => ClinicianVideoDialog(
-        plan: plan,
-        showStartButton: showStartButton,
-      ),
+      builder: (_) =>
+          ClinicianVideoDialog(plan: plan, showStartButton: showStartButton),
     );
   }
 
@@ -66,7 +70,9 @@ class _ClinicianVideoDialogState extends State<ClinicianVideoDialog> {
         if (await file.exists()) {
           _controller = VideoPlayerController.file(file);
         } else {
-          _controller = VideoPlayerController.asset('assets/demo/reference_bicep_curl.mp4');
+          _controller = VideoPlayerController.asset(
+            'assets/demo/reference_bicep_curl.mp4',
+          );
         }
       }
 
@@ -122,7 +128,11 @@ class _ClinicianVideoDialogState extends State<ClinicianVideoDialog> {
                       color: AppTheme.primaryTeal.withOpacity(0.15),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.video_camera_front, color: AppTheme.primaryTeal, size: 22),
+                    child: const Icon(
+                      Icons.video_camera_front,
+                      color: AppTheme.primaryTeal,
+                      size: 22,
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -131,11 +141,18 @@ class _ClinicianVideoDialogState extends State<ClinicianVideoDialog> {
                       children: [
                         Text(
                           '${plan.exerciseName} Clinician Demo',
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppTheme.textLight),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: AppTheme.textLight,
+                          ),
                         ),
                         const Text(
                           'Demonstrated by Dr. Sarah Chen, PT, DPT',
-                          style: TextStyle(fontSize: 12, color: AppTheme.textMuted),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: AppTheme.textMuted,
+                          ),
                         ),
                       ],
                     ),
@@ -177,38 +194,63 @@ class _ClinicianVideoDialogState extends State<ClinicianVideoDialog> {
                           else if (_hasError)
                             Center(
                               child: SingleChildScrollView(
-                                padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 8.0),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 14.0,
+                                  vertical: 8.0,
+                                ),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Container(
                                       padding: const EdgeInsets.all(10),
                                       decoration: BoxDecoration(
-                                        color: AppTheme.primaryTeal.withOpacity(0.15),
+                                        color: AppTheme.primaryTeal.withOpacity(
+                                          0.15,
+                                        ),
                                         shape: BoxShape.circle,
                                       ),
-                                      child: const Icon(Icons.videocam_rounded, size: 30, color: AppTheme.primaryTeal),
+                                      child: const Icon(
+                                        Icons.videocam_rounded,
+                                        size: 30,
+                                        color: AppTheme.primaryTeal,
+                                      ),
                                     ),
                                     const SizedBox(height: 8),
                                     const Text(
                                       'Clinician Form Demonstration',
-                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppTheme.textLight),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13,
+                                        color: AppTheme.textLight,
+                                      ),
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
                                       _errorMessage ??
                                           'Prescribed demonstration by Dr. Sarah Chen for ${plan.exerciseName} (${plan.bodySide.name.toUpperCase()} Arm).',
                                       textAlign: TextAlign.center,
-                                      style: const TextStyle(fontSize: 11, color: AppTheme.textMuted),
+                                      style: const TextStyle(
+                                        fontSize: 11,
+                                        color: AppTheme.textMuted,
+                                      ),
                                     ),
                                     const SizedBox(height: 8),
                                     OutlinedButton.icon(
                                       icon: const Icon(Icons.refresh, size: 14),
-                                      label: const Text('Replay Video', style: TextStyle(fontSize: 11)),
+                                      label: const Text(
+                                        'Replay Video',
+                                        style: TextStyle(fontSize: 11),
+                                      ),
                                       style: OutlinedButton.styleFrom(
                                         foregroundColor: AppTheme.primaryTeal,
-                                        side: BorderSide(color: AppTheme.primaryTeal.withOpacity(0.5)),
-                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                        side: BorderSide(
+                                          color: AppTheme.primaryTeal
+                                              .withOpacity(0.5),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 10,
+                                          vertical: 4,
+                                        ),
                                         visualDensity: VisualDensity.compact,
                                       ),
                                       onPressed: () {
@@ -227,11 +269,16 @@ class _ClinicianVideoDialogState extends State<ClinicianVideoDialog> {
                             const Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                CircularProgressIndicator(color: AppTheme.primaryTeal),
+                                CircularProgressIndicator(
+                                  color: AppTheme.primaryTeal,
+                                ),
                                 SizedBox(height: 12),
                                 Text(
                                   'Loading clinician demonstration...',
-                                  style: TextStyle(fontSize: 12, color: AppTheme.textMuted),
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: AppTheme.textMuted,
+                                  ),
                                 ),
                               ],
                             ),
@@ -260,7 +307,11 @@ class _ClinicianVideoDialogState extends State<ClinicianVideoDialog> {
                                               color: Colors.black54,
                                               shape: BoxShape.circle,
                                             ),
-                                            child: const Icon(Icons.play_arrow, size: 40, color: Colors.white),
+                                            child: const Icon(
+                                              Icons.play_arrow,
+                                              size: 40,
+                                              color: Colors.white,
+                                            ),
                                           ),
                                         )
                                       : const SizedBox.shrink(),
@@ -278,7 +329,9 @@ class _ClinicianVideoDialogState extends State<ClinicianVideoDialog> {
                       decoration: BoxDecoration(
                         color: AppTheme.primaryTeal.withOpacity(0.08),
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: AppTheme.primaryTeal.withOpacity(0.25)),
+                        border: Border.all(
+                          color: AppTheme.primaryTeal.withOpacity(0.25),
+                        ),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -289,7 +342,10 @@ class _ClinicianVideoDialogState extends State<ClinicianVideoDialog> {
                               const Expanded(
                                 child: Text(
                                   'Prescribed Joint Angle:',
-                                  style: TextStyle(fontSize: 13, color: AppTheme.textLight),
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: AppTheme.textLight,
+                                  ),
                                 ),
                               ),
                               Text(
@@ -309,7 +365,10 @@ class _ClinicianVideoDialogState extends State<ClinicianVideoDialog> {
                               const Expanded(
                                 child: Text(
                                   'Prescription Target:',
-                                  style: TextStyle(fontSize: 13, color: AppTheme.textLight),
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: AppTheme.textLight,
+                                  ),
                                 ),
                               ),
                               Text(
@@ -332,14 +391,22 @@ class _ClinicianVideoDialogState extends State<ClinicianVideoDialog> {
                     // Form Cues and Pacing
                     const Text(
                       'Clinician Form & Pacing Instructions:',
-                      style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppTheme.textLight),
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.textLight,
+                      ),
                     ),
                     const SizedBox(height: 6),
                     const Text(
                       '• Match the speed demonstrated in the video above.\n'
                       '• Reach the prescribed joint peak before initiating return.\n'
                       '• Keep your core steady and avoid compensating with torso swing.',
-                      style: TextStyle(fontSize: 12, color: AppTheme.textMuted, height: 1.4),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppTheme.textMuted,
+                        height: 1.4,
+                      ),
                     ),
                   ],
                 ),
@@ -364,7 +431,9 @@ class _ClinicianVideoDialogState extends State<ClinicianVideoDialog> {
                       child: ElevatedButton.icon(
                         icon: const Icon(Icons.play_arrow),
                         label: const Text('Start Monitored Exercise'),
-                        style: ElevatedButton.styleFrom(backgroundColor: AppTheme.stateCorrect),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppTheme.stateCorrect,
+                        ),
                         onPressed: () {
                           Navigator.pop(context);
                           Navigator.push(

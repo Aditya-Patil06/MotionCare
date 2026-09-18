@@ -22,25 +22,25 @@ class RepEvent {
   });
 
   Map<String, dynamic> toJson() => {
-        'repIndex': repIndex,
-        'isValid': isValid,
-        'peakAngle': peakAngle,
-        'targetAngle': targetAngle,
-        'issueCode': issueCode.name,
-        'timestamp': timestamp.toIso8601String(),
-      };
+    'repIndex': repIndex,
+    'isValid': isValid,
+    'peakAngle': peakAngle,
+    'targetAngle': targetAngle,
+    'issueCode': issueCode.name,
+    'timestamp': timestamp.toIso8601String(),
+  };
 
   factory RepEvent.fromJson(Map<String, dynamic> json) => RepEvent(
-        repIndex: json['repIndex'] as int,
-        isValid: json['isValid'] as bool,
-        peakAngle: (json['peakAngle'] as num).toDouble(),
-        targetAngle: (json['targetAngle'] as num).toDouble(),
-        issueCode: IssueCode.values.firstWhere(
-          (e) => e.name == json['issueCode'],
-          orElse: () => IssueCode.none,
-        ),
-        timestamp: DateTime.parse(json['timestamp'] as String),
-      );
+    repIndex: json['repIndex'] as int,
+    isValid: json['isValid'] as bool,
+    peakAngle: (json['peakAngle'] as num).toDouble(),
+    targetAngle: (json['targetAngle'] as num).toDouble(),
+    issueCode: IssueCode.values.firstWhere(
+      (e) => e.name == json['issueCode'],
+      orElse: () => IssueCode.none,
+    ),
+    timestamp: DateTime.parse(json['timestamp'] as String),
+  );
 }
 
 class HoldState {
@@ -75,23 +75,23 @@ class HoldState {
   }
 
   Map<String, dynamic> toJson() => {
-        'currentHoldSeconds': currentHoldSeconds,
-        'targetHoldSeconds': targetHoldSeconds,
-        'isHolding': isHolding,
-        'isPaused': isPaused,
-        'issueCode': issueCode.name,
-      };
+    'currentHoldSeconds': currentHoldSeconds,
+    'targetHoldSeconds': targetHoldSeconds,
+    'isHolding': isHolding,
+    'isPaused': isPaused,
+    'issueCode': issueCode.name,
+  };
 
   factory HoldState.fromJson(Map<String, dynamic> json) => HoldState(
-        currentHoldSeconds: (json['currentHoldSeconds'] as num).toDouble(),
-        targetHoldSeconds: (json['targetHoldSeconds'] as num).toDouble(),
-        isHolding: json['isHolding'] as bool? ?? false,
-        isPaused: json['isPaused'] as bool? ?? false,
-        issueCode: IssueCode.values.firstWhere(
-          (e) => e.name == json['issueCode'],
-          orElse: () => IssueCode.none,
-        ),
-      );
+    currentHoldSeconds: (json['currentHoldSeconds'] as num).toDouble(),
+    targetHoldSeconds: (json['targetHoldSeconds'] as num).toDouble(),
+    isHolding: json['isHolding'] as bool? ?? false,
+    isPaused: json['isPaused'] as bool? ?? false,
+    issueCode: IssueCode.values.firstWhere(
+      (e) => e.name == json['issueCode'],
+      orElse: () => IssueCode.none,
+    ),
+  );
 }
 
 class SessionEvent {
@@ -114,29 +114,29 @@ class SessionEvent {
   });
 
   Map<String, dynamic> toJson() => {
-        'timestamp': timestamp.toIso8601String(),
-        'aiState': aiState.name,
-        'currentAngle': currentAngle,
-        'targetAngle': targetAngle,
-        'issueCode': issueCode.name,
-        'repPhase': repPhase?.name,
-        'durationSeconds': durationSeconds,
-      };
+    'timestamp': timestamp.toIso8601String(),
+    'aiState': aiState.name,
+    'currentAngle': currentAngle,
+    'targetAngle': targetAngle,
+    'issueCode': issueCode.name,
+    'repPhase': repPhase?.name,
+    'durationSeconds': durationSeconds,
+  };
 
   factory SessionEvent.fromJson(Map<String, dynamic> json) => SessionEvent(
-        timestamp: DateTime.parse(json['timestamp'] as String),
-        aiState: AiState.values.firstWhere((e) => e.name == json['aiState']),
-        currentAngle: (json['currentAngle'] as num).toDouble(),
-        targetAngle: (json['targetAngle'] as num).toDouble(),
-        issueCode: IssueCode.values.firstWhere(
-          (e) => e.name == json['issueCode'],
-          orElse: () => IssueCode.none,
-        ),
-        repPhase: json['repPhase'] != null
-            ? RepPhase.values.firstWhere((e) => e.name == json['repPhase'])
-            : null,
-        durationSeconds: (json['durationSeconds'] as num?)?.toDouble(),
-      );
+    timestamp: DateTime.parse(json['timestamp'] as String),
+    aiState: AiState.values.firstWhere((e) => e.name == json['aiState']),
+    currentAngle: (json['currentAngle'] as num).toDouble(),
+    targetAngle: (json['targetAngle'] as num).toDouble(),
+    issueCode: IssueCode.values.firstWhere(
+      (e) => e.name == json['issueCode'],
+      orElse: () => IssueCode.none,
+    ),
+    repPhase: json['repPhase'] != null
+        ? RepPhase.values.firstWhere((e) => e.name == json['repPhase'])
+        : null,
+    durationSeconds: (json['durationSeconds'] as num?)?.toDouble(),
+  );
 }
 
 class EngineFrame {

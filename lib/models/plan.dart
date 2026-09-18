@@ -53,7 +53,8 @@ class ExercisePlan {
 
   /// The effective target angle used for live patient comparison.
   /// If clinician manually overrode, returns manualOverrideAngle; else returns extractedTargetAngle.
-  double get effectiveTargetAngle => manualOverrideAngle ?? extractedTargetAngle;
+  double get effectiveTargetAngle =>
+      manualOverrideAngle ?? extractedTargetAngle;
 
   bool get isClinicianOverridden => manualOverrideAngle != null;
 
@@ -79,7 +80,8 @@ class ExercisePlan {
       exerciseType: exerciseType,
       referenceVideoUrl: referenceVideoUrl ?? this.referenceVideoUrl,
       extractedTargetAngle: extractedTargetAngle ?? this.extractedTargetAngle,
-      extractedAngleTolerance: extractedAngleTolerance ?? this.extractedAngleTolerance,
+      extractedAngleTolerance:
+          extractedAngleTolerance ?? this.extractedAngleTolerance,
       extractionConfidence: extractionConfidence ?? this.extractionConfidence,
       manualOverrideAngle: manualOverrideAngle ?? this.manualOverrideAngle,
       movementPhases: movementPhases,
@@ -94,71 +96,71 @@ class ExercisePlan {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'doctorId': doctorId,
-        'patientId': patientId,
-        'exerciseId': exerciseId,
-        'exerciseName': exerciseName,
-        'exerciseType': exerciseType.name,
-        'referenceVideoUrl': referenceVideoUrl,
-        'extractedTargetAngle': extractedTargetAngle,
-        'extractedAngleTolerance': extractedAngleTolerance,
-        'extractionConfidence': extractionConfidence,
-        'manualOverrideAngle': manualOverrideAngle,
-        'movementPhases': movementPhases.map((e) => e.name).toList(),
-        'bodySide': bodySide.name,
-        'reps': reps,
-        'sets': sets,
-        'holdDurationSeconds': holdDurationSeconds,
-        'status': status.name,
-        'createdAt': createdAt.toIso8601String(),
-        'updatedAt': updatedAt.toIso8601String(),
-      };
+    'id': id,
+    'doctorId': doctorId,
+    'patientId': patientId,
+    'exerciseId': exerciseId,
+    'exerciseName': exerciseName,
+    'exerciseType': exerciseType.name,
+    'referenceVideoUrl': referenceVideoUrl,
+    'extractedTargetAngle': extractedTargetAngle,
+    'extractedAngleTolerance': extractedAngleTolerance,
+    'extractionConfidence': extractionConfidence,
+    'manualOverrideAngle': manualOverrideAngle,
+    'movementPhases': movementPhases.map((e) => e.name).toList(),
+    'bodySide': bodySide.name,
+    'reps': reps,
+    'sets': sets,
+    'holdDurationSeconds': holdDurationSeconds,
+    'status': status.name,
+    'createdAt': createdAt.toIso8601String(),
+    'updatedAt': updatedAt.toIso8601String(),
+  };
 
   factory ExercisePlan.fromJson(Map<String, dynamic> json) => ExercisePlan(
-        id: json['id'] as String,
-        doctorId: json['doctorId'] as String,
-        patientId: json['patientId'] as String,
-        exerciseId: json['exerciseId'] as String,
-        exerciseName: json['exerciseName'] as String,
-        exerciseType: ExerciseType.values.firstWhere(
-          (e) => e.name == json['exerciseType'],
-          orElse: () => ExerciseType.rep,
-        ),
-        referenceVideoUrl: json['referenceVideoUrl'] as String? ?? '',
-        extractedTargetAngle:
-            (json['extractedTargetAngle'] as num).toDouble(),
-        extractedAngleTolerance:
-            (json['extractedAngleTolerance'] as num?)?.toDouble() ?? 12.0,
-        extractionConfidence:
-            (json['extractionConfidence'] as num).toDouble(),
-        manualOverrideAngle:
-            (json['manualOverrideAngle'] as num?)?.toDouble(),
-        movementPhases: (json['movementPhases'] as List<dynamic>?)
-                ?.map((e) => MovementPhase.values.firstWhere(
-                      (m) => m.name == e,
-                      orElse: () => MovementPhase.moving,
-                    ))
-                .toList() ??
-            const [
-              MovementPhase.start,
-              MovementPhase.moving,
-              MovementPhase.peak,
-              MovementPhase.returnPhase,
-            ],
-        bodySide: BodySide.values.firstWhere(
-          (e) => e.name == json['bodySide'],
-          orElse: () => BodySide.right,
-        ),
-        reps: json['reps'] as int? ?? 10,
-        sets: json['sets'] as int? ?? 3,
-        holdDurationSeconds:
-            (json['holdDurationSeconds'] as num?)?.toDouble() ?? 60.0,
-        status: PlanStatus.values.firstWhere(
-          (e) => e.name == json['status'],
-          orElse: () => PlanStatus.active,
-        ),
-        createdAt: DateTime.parse(json['createdAt'] as String),
-        updatedAt: DateTime.parse(json['updatedAt'] as String),
-      );
+    id: json['id'] as String,
+    doctorId: json['doctorId'] as String,
+    patientId: json['patientId'] as String,
+    exerciseId: json['exerciseId'] as String,
+    exerciseName: json['exerciseName'] as String,
+    exerciseType: ExerciseType.values.firstWhere(
+      (e) => e.name == json['exerciseType'],
+      orElse: () => ExerciseType.rep,
+    ),
+    referenceVideoUrl: json['referenceVideoUrl'] as String? ?? '',
+    extractedTargetAngle: (json['extractedTargetAngle'] as num).toDouble(),
+    extractedAngleTolerance:
+        (json['extractedAngleTolerance'] as num?)?.toDouble() ?? 12.0,
+    extractionConfidence: (json['extractionConfidence'] as num).toDouble(),
+    manualOverrideAngle: (json['manualOverrideAngle'] as num?)?.toDouble(),
+    movementPhases:
+        (json['movementPhases'] as List<dynamic>?)
+            ?.map(
+              (e) => MovementPhase.values.firstWhere(
+                (m) => m.name == e,
+                orElse: () => MovementPhase.moving,
+              ),
+            )
+            .toList() ??
+        const [
+          MovementPhase.start,
+          MovementPhase.moving,
+          MovementPhase.peak,
+          MovementPhase.returnPhase,
+        ],
+    bodySide: BodySide.values.firstWhere(
+      (e) => e.name == json['bodySide'],
+      orElse: () => BodySide.right,
+    ),
+    reps: json['reps'] as int? ?? 10,
+    sets: json['sets'] as int? ?? 3,
+    holdDurationSeconds:
+        (json['holdDurationSeconds'] as num?)?.toDouble() ?? 60.0,
+    status: PlanStatus.values.firstWhere(
+      (e) => e.name == json['status'],
+      orElse: () => PlanStatus.active,
+    ),
+    createdAt: DateTime.parse(json['createdAt'] as String),
+    updatedAt: DateTime.parse(json['updatedAt'] as String),
+  );
 }

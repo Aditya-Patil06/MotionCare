@@ -4,7 +4,9 @@
 // live angle arc, floating joint degree badges, and directional cues.
 
 import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
+
 import '../../core/theme.dart';
 import '../../models/enums.dart';
 import '../../models/landmark.dart';
@@ -60,8 +62,14 @@ class PersonalizedGuidancePainter extends CustomPainter {
       double normY;
 
       if (previewImageSize != null) {
-        final double imgW = math.min(previewImageSize!.width, previewImageSize!.height);
-        final double imgH = math.max(previewImageSize!.width, previewImageSize!.height);
+        final double imgW = math.min(
+          previewImageSize!.width,
+          previewImageSize!.height,
+        );
+        final double imgH = math.max(
+          previewImageSize!.width,
+          previewImageSize!.height,
+        );
 
         if (lm.x > 1.0 || lm.y > 1.0) {
           normX = (lm.x / imgW).clamp(0.0, 1.0);
@@ -105,23 +113,59 @@ class PersonalizedGuidancePainter extends CustomPainter {
     const double pad = 12.0;
 
     // Top-Left
-    canvas.drawLine(const Offset(pad, pad), const Offset(pad + cornerLen, pad), framePaint);
-    canvas.drawLine(const Offset(pad, pad), const Offset(pad, pad + cornerLen), framePaint);
+    canvas.drawLine(
+      const Offset(pad, pad),
+      const Offset(pad + cornerLen, pad),
+      framePaint,
+    );
+    canvas.drawLine(
+      const Offset(pad, pad),
+      const Offset(pad, pad + cornerLen),
+      framePaint,
+    );
 
     // Top-Right
-    canvas.drawLine(Offset(size.width - pad, pad), Offset(size.width - pad - cornerLen, pad), framePaint);
-    canvas.drawLine(Offset(size.width - pad, pad), Offset(size.width - pad, pad + cornerLen), framePaint);
+    canvas.drawLine(
+      Offset(size.width - pad, pad),
+      Offset(size.width - pad - cornerLen, pad),
+      framePaint,
+    );
+    canvas.drawLine(
+      Offset(size.width - pad, pad),
+      Offset(size.width - pad, pad + cornerLen),
+      framePaint,
+    );
 
     // Bottom-Left
-    canvas.drawLine(Offset(pad, size.height - pad), Offset(pad + cornerLen, size.height - pad), framePaint);
-    canvas.drawLine(Offset(pad, size.height - pad), Offset(pad, size.height - pad - cornerLen), framePaint);
+    canvas.drawLine(
+      Offset(pad, size.height - pad),
+      Offset(pad + cornerLen, size.height - pad),
+      framePaint,
+    );
+    canvas.drawLine(
+      Offset(pad, size.height - pad),
+      Offset(pad, size.height - pad - cornerLen),
+      framePaint,
+    );
 
     // Bottom-Right
-    canvas.drawLine(Offset(size.width - pad, size.height - pad), Offset(size.width - pad - cornerLen, size.height - pad), framePaint);
-    canvas.drawLine(Offset(size.width - pad, size.height - pad), Offset(size.width - pad, size.height - pad - cornerLen), framePaint);
+    canvas.drawLine(
+      Offset(size.width - pad, size.height - pad),
+      Offset(size.width - pad - cornerLen, size.height - pad),
+      framePaint,
+    );
+    canvas.drawLine(
+      Offset(size.width - pad, size.height - pad),
+      Offset(size.width - pad, size.height - pad - cornerLen),
+      framePaint,
+    );
   }
 
-  void _drawFullSkeleton(Canvas canvas, Offset Function(Landmark) toOffset, Color stateColor) {
+  void _drawFullSkeleton(
+    Canvas canvas,
+    Offset Function(Landmark) toOffset,
+    Color stateColor,
+  ) {
     final leftShoulder = landmarks['left_shoulder'];
     final rightShoulder = landmarks['right_shoulder'];
     final leftElbow = landmarks['left_elbow'];
@@ -143,7 +187,11 @@ class PersonalizedGuidancePainter extends CustomPainter {
 
     void drawBone(Landmark? a, Landmark? b, bool isActive) {
       if (a == null || b == null) return;
-      canvas.drawLine(toOffset(a), toOffset(b), isActive ? activeBonePaint : inactiveBonePaint);
+      canvas.drawLine(
+        toOffset(a),
+        toOffset(b),
+        isActive ? activeBonePaint : inactiveBonePaint,
+      );
     }
 
     // Torso Frame
@@ -164,7 +212,9 @@ class PersonalizedGuidancePainter extends CustomPainter {
     // Keypoint Joint Nodes
     for (final entry in landmarks.entries) {
       final p = toOffset(entry.value);
-      final bool isCurrentSide = entry.key.startsWith(bodySide == BodySide.left ? 'left' : 'right');
+      final bool isCurrentSide = entry.key.startsWith(
+        bodySide == BodySide.left ? 'left' : 'right',
+      );
       final double r = isCurrentSide ? 6.0 : 4.0;
 
       canvas.drawCircle(
@@ -196,9 +246,9 @@ class PersonalizedGuidancePainter extends CustomPainter {
   ) {
     final String prefix = bodySide == BodySide.left ? 'left' : 'right';
 
-    Landmark? anchorLm;  // Anchor A
-    Landmark? vertexLm;  // Primary Joint B
-    Landmark? movingLm;  // Moving Limb Endpoint C
+    Landmark? anchorLm; // Anchor A
+    Landmark? vertexLm; // Primary Joint B
+    Landmark? movingLm; // Moving Limb Endpoint C
 
     if (exerciseId == 'shoulder_raise') {
       anchorLm = landmarks['${prefix}_hip'];
@@ -265,7 +315,13 @@ class PersonalizedGuidancePainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0;
 
-    canvas.drawArc(corridorRect, startAngle, sweepAngle, false, corridorBorderPaint);
+    canvas.drawArc(
+      corridorRect,
+      startAngle,
+      sweepAngle,
+      false,
+      corridorBorderPaint,
+    );
 
     // 2. Draw Ideal Ghost Target Guideline
     final targetEnd = Offset(
@@ -345,7 +401,8 @@ class PersonalizedGuidancePainter extends CustomPainter {
 
   void _drawJointBadge(Canvas canvas, Offset pB, Color stateColor) {
     final String currentStr = '${currentAngle.toStringAsFixed(0)}°';
-    final String targetStr = 'Target: ${targetAngle.toStringAsFixed(0)}°±${tolerance.toStringAsFixed(0)}°';
+    final String targetStr =
+        'Target: ${targetAngle.toStringAsFixed(0)}°±${tolerance.toStringAsFixed(0)}°';
 
     final textSpan = TextSpan(
       children: [
@@ -359,10 +416,7 @@ class PersonalizedGuidancePainter extends CustomPainter {
         ),
         TextSpan(
           text: targetStr,
-          style: const TextStyle(
-            color: Colors.white70,
-            fontSize: 10,
-          ),
+          style: const TextStyle(color: Colors.white70, fontSize: 10),
         ),
       ],
     );
@@ -400,7 +454,12 @@ class PersonalizedGuidancePainter extends CustomPainter {
     tp.paint(canvas, badgeOffset);
   }
 
-  void _drawDirectionalCue(Canvas canvas, Offset pB, double limbLength, Color stateColor) {
+  void _drawDirectionalCue(
+    Canvas canvas,
+    Offset pB,
+    double limbLength,
+    Color stateColor,
+  ) {
     String cueText = '';
     Color cueColor = stateColor;
 

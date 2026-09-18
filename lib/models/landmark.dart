@@ -17,40 +17,37 @@ class Landmark {
   });
 
   Map<String, dynamic> toJson() => {
-        'x': x,
-        'y': y,
-        'z': z,
-        'likelihood': likelihood,
-      };
+    'x': x,
+    'y': y,
+    'z': z,
+    'likelihood': likelihood,
+  };
 
   factory Landmark.fromJson(Map<String, dynamic> json) => Landmark(
-        x: (json['x'] as num).toDouble(),
-        y: (json['y'] as num).toDouble(),
-        z: (json['z'] as num?)?.toDouble() ?? 0.0,
-        likelihood: (json['likelihood'] as num).toDouble(),
-      );
+    x: (json['x'] as num).toDouble(),
+    y: (json['y'] as num).toDouble(),
+    z: (json['z'] as num?)?.toDouble() ?? 0.0,
+    likelihood: (json['likelihood'] as num).toDouble(),
+  );
 }
 
 class PoseFrame {
   final DateTime timestamp;
   final Map<String, Landmark> landmarks;
 
-  const PoseFrame({
-    required this.timestamp,
-    required this.landmarks,
-  });
+  const PoseFrame({required this.timestamp, required this.landmarks});
 
   Map<String, dynamic> toJson() => {
-        'timestamp': timestamp.toIso8601String(),
-        'landmarks': landmarks.map((k, v) => MapEntry(k, v.toJson())),
-      };
+    'timestamp': timestamp.toIso8601String(),
+    'landmarks': landmarks.map((k, v) => MapEntry(k, v.toJson())),
+  };
 
   factory PoseFrame.fromJson(Map<String, dynamic> json) => PoseFrame(
-        timestamp: DateTime.parse(json['timestamp'] as String),
-        landmarks: (json['landmarks'] as Map<String, dynamic>).map(
-          (k, v) => MapEntry(k, Landmark.fromJson(v as Map<String, dynamic>)),
-        ),
-      );
+    timestamp: DateTime.parse(json['timestamp'] as String),
+    landmarks: (json['landmarks'] as Map<String, dynamic>).map(
+      (k, v) => MapEntry(k, Landmark.fromJson(v as Map<String, dynamic>)),
+    ),
+  );
 }
 
 class JointTriple {
@@ -58,19 +55,15 @@ class JointTriple {
   final String b; // Joint vertex (e.g. elbow)
   final String c; // Third landmark (e.g. wrist)
 
-  const JointTriple({
-    required this.a,
-    required this.b,
-    required this.c,
-  });
+  const JointTriple({required this.a, required this.b, required this.c});
 
   Map<String, dynamic> toJson() => {'a': a, 'b': b, 'c': c};
 
   factory JointTriple.fromJson(Map<String, dynamic> json) => JointTriple(
-        a: json['a'] as String,
-        b: json['b'] as String,
-        c: json['c'] as String,
-      );
+    a: json['a'] as String,
+    b: json['b'] as String,
+    c: json['c'] as String,
+  );
 }
 
 class JointDefinition {
@@ -85,10 +78,10 @@ class JointDefinition {
   });
 
   Map<String, dynamic> toJson() => {
-        'primaryJoint': primaryJoint,
-        'bodySide': bodySide.name,
-        'jointTriple': jointTriple.toJson(),
-      };
+    'primaryJoint': primaryJoint,
+    'bodySide': bodySide.name,
+    'jointTriple': jointTriple.toJson(),
+  };
 
   factory JointDefinition.fromJson(Map<String, dynamic> json) =>
       JointDefinition(
@@ -97,8 +90,9 @@ class JointDefinition {
           (e) => e.name == json['bodySide'],
           orElse: () => BodySide.auto,
         ),
-        jointTriple:
-            JointTriple.fromJson(json['jointTriple'] as Map<String, dynamic>),
+        jointTriple: JointTriple.fromJson(
+          json['jointTriple'] as Map<String, dynamic>,
+        ),
       );
 }
 
@@ -122,11 +116,11 @@ class BiomechanicsBounds {
       targetAngle >= targetMinAngle && targetAngle <= targetMaxAngle;
 
   Map<String, dynamic> toJson() => {
-        'minPlausibleAngle': minPlausibleAngle,
-        'maxPlausibleAngle': maxPlausibleAngle,
-        'targetMinAngle': targetMinAngle,
-        'targetMaxAngle': targetMaxAngle,
-      };
+    'minPlausibleAngle': minPlausibleAngle,
+    'maxPlausibleAngle': maxPlausibleAngle,
+    'targetMinAngle': targetMinAngle,
+    'targetMaxAngle': targetMaxAngle,
+  };
 
   factory BiomechanicsBounds.fromJson(Map<String, dynamic> json) =>
       BiomechanicsBounds(
@@ -149,14 +143,14 @@ class AngleSample {
   });
 
   Map<String, dynamic> toJson() => {
-        'timestamp': timestamp.toIso8601String(),
-        'angle': angle,
-        'visibilityValid': visibilityValid,
-      };
+    'timestamp': timestamp.toIso8601String(),
+    'angle': angle,
+    'visibilityValid': visibilityValid,
+  };
 
   factory AngleSample.fromJson(Map<String, dynamic> json) => AngleSample(
-        timestamp: DateTime.parse(json['timestamp'] as String),
-        angle: (json['angle'] as num).toDouble(),
-        visibilityValid: json['visibilityValid'] as bool? ?? true,
-      );
+    timestamp: DateTime.parse(json['timestamp'] as String),
+    angle: (json['angle'] as num).toDouble(),
+    visibilityValid: json['visibilityValid'] as bool? ?? true,
+  );
 }

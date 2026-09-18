@@ -35,11 +35,11 @@ class ShoulderRaiseRule implements ExerciseRule {
 
   @override
   BiomechanicsBounds get bounds => const BiomechanicsBounds(
-        minPlausibleAngle: 20.0,
-        maxPlausibleAngle: 180.0,
-        targetMinAngle: 60.0,
-        targetMaxAngle: 120.0,
-      );
+    minPlausibleAngle: 20.0,
+    maxPlausibleAngle: 180.0,
+    targetMinAngle: 60.0,
+    targetMaxAngle: 120.0,
+  );
 
   @override
   JointDefinition get jointDefinition {
@@ -133,10 +133,7 @@ class ShoulderRaiseRule implements ExerciseRule {
   }
 
   @override
-  RepEvent? detectRep(
-    List<AngleSample> history,
-    ReferenceProfile profile,
-  ) {
+  RepEvent? detectRep(List<AngleSample> history, ReferenceProfile profile) {
     return null; // Hold exercises do not produce rep events
   }
 
@@ -149,8 +146,8 @@ class ShoulderRaiseRule implements ExerciseRule {
     final issue = state == AiState.correct
         ? IssueCode.none
         : (state == AiState.insufficientVisibility
-            ? IssueCode.insufficientVisibility
-            : IssueCode.postureDeviation);
+              ? IssueCode.insufficientVisibility
+              : IssueCode.postureDeviation);
 
     return _holdEngine.processTick(
       aiState: state,

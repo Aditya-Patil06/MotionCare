@@ -3,10 +3,12 @@
 
 import 'dart:async';
 import 'dart:math' as math;
+
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../ai/engine/exercise_engine.dart';
 import '../../core/theme.dart';
 import '../../core/widgets/motioncare_logo.dart';
@@ -191,18 +193,44 @@ class _LiveExerciseScreenState extends State<LiveExerciseScreen> {
       activeElbowX = activeShoulderX;
       activeElbowY = shoulderY + 0.22;
 
-      activeWristX = activeElbowX + (isLeft ? -1.0 : 1.0) * 0.20 * math.sin(math.pi - angleRad);
+      activeWristX =
+          activeElbowX +
+          (isLeft ? -1.0 : 1.0) * 0.20 * math.sin(math.pi - angleRad);
       activeWristY = activeElbowY + 0.20 * math.cos(math.pi - angleRad);
     }
 
     return {
-      '${prefix}_shoulder': Landmark(x: activeShoulderX, y: shoulderY, likelihood: 0.98),
-      '${prefix}_elbow': Landmark(x: activeElbowX, y: activeElbowY, likelihood: 0.95),
-      '${prefix}_wrist': Landmark(x: activeWristX, y: activeWristY, likelihood: 0.94),
+      '${prefix}_shoulder': Landmark(
+        x: activeShoulderX,
+        y: shoulderY,
+        likelihood: 0.98,
+      ),
+      '${prefix}_elbow': Landmark(
+        x: activeElbowX,
+        y: activeElbowY,
+        likelihood: 0.95,
+      ),
+      '${prefix}_wrist': Landmark(
+        x: activeWristX,
+        y: activeWristY,
+        likelihood: 0.94,
+      ),
       '${prefix}_hip': Landmark(x: activeShoulderX, y: hipY, likelihood: 0.92),
-      '${oppPrefix}_shoulder': Landmark(x: oppShoulderX, y: shoulderY, likelihood: 0.90),
-      '${oppPrefix}_elbow': Landmark(x: oppShoulderX, y: shoulderY + 0.22, likelihood: 0.90),
-      '${oppPrefix}_wrist': Landmark(x: oppShoulderX, y: shoulderY + 0.42, likelihood: 0.88),
+      '${oppPrefix}_shoulder': Landmark(
+        x: oppShoulderX,
+        y: shoulderY,
+        likelihood: 0.90,
+      ),
+      '${oppPrefix}_elbow': Landmark(
+        x: oppShoulderX,
+        y: shoulderY + 0.22,
+        likelihood: 0.90,
+      ),
+      '${oppPrefix}_wrist': Landmark(
+        x: oppShoulderX,
+        y: shoulderY + 0.42,
+        likelihood: 0.88,
+      ),
       '${oppPrefix}_hip': Landmark(x: oppShoulderX, y: hipY, likelihood: 0.90),
     };
   }
@@ -281,7 +309,11 @@ class _LiveExerciseScreenState extends State<LiveExerciseScreen> {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppTheme.darkText, size: 20),
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: AppTheme.darkText,
+            size: 20,
+          ),
           tooltip: 'Back',
           onPressed: () => Navigator.maybePop(context),
         ),
@@ -289,12 +321,18 @@ class _LiveExerciseScreenState extends State<LiveExerciseScreen> {
         actions: [
           if (widget.plan.referenceVideoUrl.isNotEmpty)
             IconButton(
-              icon: const Icon(Icons.videocam_outlined, color: AppTheme.primaryGreen),
+              icon: const Icon(
+                Icons.videocam_outlined,
+                color: AppTheme.primaryGreen,
+              ),
               tooltip: 'Doctor Form Demo',
               onPressed: () => ClinicianVideoDialog.show(context, widget.plan),
             ),
           IconButton(
-            icon: const Icon(Icons.check_circle_outline_rounded, color: AppTheme.primaryGreen),
+            icon: const Icon(
+              Icons.check_circle_outline_rounded,
+              color: AppTheme.primaryGreen,
+            ),
             tooltip: 'Finish Session',
             onPressed: _completeSession,
           ),
@@ -329,7 +367,9 @@ class _LiveExerciseScreenState extends State<LiveExerciseScreen> {
                   color: Colors.black,
                   borderRadius: BorderRadius.circular(26),
                   border: Border.all(
-                    color: _isPaused ? AppTheme.textMuted : _getStateColor(frame?.aiState),
+                    color: _isPaused
+                        ? AppTheme.textMuted
+                        : _getStateColor(frame?.aiState),
                     width: 2.0,
                   ),
                   boxShadow: [
@@ -356,10 +396,14 @@ class _LiveExerciseScreenState extends State<LiveExerciseScreen> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(24.0),
                                     child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
-                                        const Icon(Icons.videocam_off_rounded,
-                                            size: 48, color: AppTheme.stateIncorrect),
+                                        const Icon(
+                                          Icons.videocam_off_rounded,
+                                          size: 48,
+                                          color: AppTheme.stateIncorrect,
+                                        ),
                                         const SizedBox(height: 12),
                                         const Text(
                                           'Camera Unavailable',
@@ -374,7 +418,9 @@ class _LiveExerciseScreenState extends State<LiveExerciseScreen> {
                                           _cameraErrorMessage!,
                                           textAlign: TextAlign.center,
                                           style: const TextStyle(
-                                              color: AppTheme.textMuted, fontSize: 13),
+                                            color: AppTheme.textMuted,
+                                            fontSize: 13,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -394,8 +440,10 @@ class _LiveExerciseScreenState extends State<LiveExerciseScreen> {
                             aiState: frame.aiState,
                             bodySide: widget.plan.bodySide,
                             exerciseId: widget.plan.exerciseId,
-                            previewImageSize: _cameraController?.value.previewSize,
-                            isFrontCamera: _isCameraReady && _cameraController != null,
+                            previewImageSize:
+                                _cameraController?.value.previewSize,
+                            isFrontCamera:
+                                _isCameraReady && _cameraController != null,
                           ),
                         ),
 
@@ -406,9 +454,15 @@ class _LiveExerciseScreenState extends State<LiveExerciseScreen> {
                         right: 16,
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 14, vertical: 10),
+                            horizontal: 14,
+                            vertical: 10,
+                          ),
                           decoration: BoxDecoration(
-                            color: (_isPaused ? Colors.black87 : _getStateColor(frame?.aiState)).withOpacity(0.92),
+                            color:
+                                (_isPaused
+                                        ? Colors.black87
+                                        : _getStateColor(frame?.aiState))
+                                    .withOpacity(0.92),
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(
@@ -421,7 +475,9 @@ class _LiveExerciseScreenState extends State<LiveExerciseScreen> {
                           child: Row(
                             children: [
                               Icon(
-                                _isPaused ? Icons.pause_circle_outline_rounded : _getStateIcon(frame?.aiState),
+                                _isPaused
+                                    ? Icons.pause_circle_outline_rounded
+                                    : _getStateIcon(frame?.aiState),
                                 color: Colors.white,
                                 size: 20,
                               ),
@@ -430,7 +486,8 @@ class _LiveExerciseScreenState extends State<LiveExerciseScreen> {
                                 child: Text(
                                   _isPaused
                                       ? 'Session Paused — Tap Start to resume'
-                                      : (frame?.feedbackMessage ?? 'Position body in camera view'),
+                                      : (frame?.feedbackMessage ??
+                                            'Position body in camera view'),
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
@@ -449,12 +506,16 @@ class _LiveExerciseScreenState extends State<LiveExerciseScreen> {
                         left: 16,
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 6),
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.black.withOpacity(0.75),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: _isPaused ? AppTheme.textMuted : _getStateColor(frame?.aiState),
+                              color: _isPaused
+                                  ? AppTheme.textMuted
+                                  : _getStateColor(frame?.aiState),
                               width: 1.5,
                             ),
                           ),
@@ -466,14 +527,20 @@ class _LiveExerciseScreenState extends State<LiveExerciseScreen> {
                                 height: 8,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: _isPaused ? AppTheme.textMuted : _getStateColor(frame?.aiState),
+                                  color: _isPaused
+                                      ? AppTheme.textMuted
+                                      : _getStateColor(frame?.aiState),
                                 ),
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                _isPaused ? 'PAUSED' : _getStateText(frame?.aiState),
+                                _isPaused
+                                    ? 'PAUSED'
+                                    : _getStateText(frame?.aiState),
                                 style: TextStyle(
-                                  color: _isPaused ? Colors.white : _getStateColor(frame?.aiState),
+                                  color: _isPaused
+                                      ? Colors.white
+                                      : _getStateColor(frame?.aiState),
                                   fontWeight: FontWeight.bold,
                                   fontSize: 11,
                                   letterSpacing: 0.5,
@@ -499,8 +566,10 @@ class _LiveExerciseScreenState extends State<LiveExerciseScreen> {
                   Expanded(
                     child: _buildHudCard(
                       title: 'TARGET ANGLE',
-                      value: '${widget.plan.effectiveTargetAngle.toStringAsFixed(0)}°',
-                      subtitle: '±${widget.plan.extractedAngleTolerance.toStringAsFixed(0)}° tol',
+                      value:
+                          '${widget.plan.effectiveTargetAngle.toStringAsFixed(0)}°',
+                      subtitle:
+                          '±${widget.plan.extractedAngleTolerance.toStringAsFixed(0)}° tol',
                       color: AppTheme.primaryGreen,
                     ),
                   ),
@@ -511,8 +580,12 @@ class _LiveExerciseScreenState extends State<LiveExerciseScreen> {
                       value: frame != null && frame.isVisibilityValid
                           ? '${frame.currentAngle.toStringAsFixed(0)}°'
                           : '--',
-                      subtitle: frame != null && frame.isVisibilityValid ? 'Active' : 'Searching',
-                      color: _isPaused ? AppTheme.textMuted : _getStateColor(frame?.aiState),
+                      subtitle: frame != null && frame.isVisibilityValid
+                          ? 'Active'
+                          : 'Searching',
+                      color: _isPaused
+                          ? AppTheme.textMuted
+                          : _getStateColor(frame?.aiState),
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -540,7 +613,11 @@ class _LiveExerciseScreenState extends State<LiveExerciseScreen> {
                   children: [
                     const Text(
                       'Simulate:',
-                      style: TextStyle(fontSize: 11, color: AppTheme.textMuted, fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: AppTheme.textMuted,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     Expanded(
                       child: Slider(
@@ -585,7 +662,11 @@ class _LiveExerciseScreenState extends State<LiveExerciseScreen> {
                             borderRadius: BorderRadius.circular(28),
                           ),
                         ),
-                        icon: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 24),
+                        icon: const Icon(
+                          Icons.play_arrow_rounded,
+                          color: Colors.white,
+                          size: 24,
+                        ),
                         label: const Text(
                           'Start',
                           style: TextStyle(
@@ -618,7 +699,11 @@ class _LiveExerciseScreenState extends State<LiveExerciseScreen> {
                             borderRadius: BorderRadius.circular(28),
                           ),
                         ),
-                        icon: const Icon(Icons.pause_rounded, color: AppTheme.darkText, size: 24),
+                        icon: const Icon(
+                          Icons.pause_rounded,
+                          color: AppTheme.darkText,
+                          size: 24,
+                        ),
                         label: const Text(
                           'Pause',
                           style: TextStyle(
@@ -645,7 +730,11 @@ class _LiveExerciseScreenState extends State<LiveExerciseScreen> {
               padding: const EdgeInsets.only(bottom: 6),
               child: TextButton.icon(
                 onPressed: _completeSession,
-                icon: const Icon(Icons.check_circle_outline_rounded, size: 16, color: AppTheme.textMuted),
+                icon: const Icon(
+                  Icons.check_circle_outline_rounded,
+                  size: 16,
+                  color: AppTheme.textMuted,
+                ),
                 label: const Text(
                   'Finish Session & View Report',
                   style: TextStyle(

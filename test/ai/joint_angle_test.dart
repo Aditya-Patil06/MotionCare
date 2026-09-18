@@ -1,7 +1,7 @@
 // test/ai/joint_angle_test.dart
 import 'package:flutter_test/flutter_test.dart';
-import 'package:physio_app/ai/angles/joint_angle_engine.dart';
-import 'package:physio_app/models/landmark.dart';
+import 'package:motioncare/ai/angles/joint_angle_engine.dart';
+import 'package:motioncare/models/landmark.dart';
 
 void main() {
   group('JointAngleEngine Biomechanical Mathematics', () {
@@ -14,14 +14,17 @@ void main() {
       expect(angle, closeTo(90.0, 0.001));
     });
 
-    test('Calculates exact 180 degree angle (straight limb / collinear opposite)', () {
-      final a = Landmark(x: 0, y: 1, z: 0, likelihood: 1.0);
-      final b = Landmark(x: 0, y: 0, z: 0, likelihood: 1.0); // vertex
-      final c = Landmark(x: 0, y: -1, z: 0, likelihood: 1.0);
+    test(
+      'Calculates exact 180 degree angle (straight limb / collinear opposite)',
+      () {
+        final a = Landmark(x: 0, y: 1, z: 0, likelihood: 1.0);
+        final b = Landmark(x: 0, y: 0, z: 0, likelihood: 1.0); // vertex
+        final c = Landmark(x: 0, y: -1, z: 0, likelihood: 1.0);
 
-      final angle = JointAngleEngine.computeAngle(a, b, c);
-      expect(angle, closeTo(180.0, 0.001));
-    });
+        final angle = JointAngleEngine.computeAngle(a, b, c);
+        expect(angle, closeTo(180.0, 0.001));
+      },
+    );
 
     test('Calculates exact 0 degree angle (collinear same direction)', () {
       final a = Landmark(x: 0, y: 1, z: 0, likelihood: 1.0);

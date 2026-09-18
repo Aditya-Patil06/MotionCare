@@ -3,6 +3,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../models/user.dart';
 
 class AuthService extends ChangeNotifier {
@@ -52,7 +53,9 @@ class AuthService extends ChangeNotifier {
         _currentUser = demoDoctor;
         notifyListeners();
       } else if (savedRole == UserRole.patient.name) {
-        if (savedPatientId != null && savedPatientId.isNotEmpty && savedPatientId != demoPatient.id) {
+        if (savedPatientId != null &&
+            savedPatientId.isNotEmpty &&
+            savedPatientId != demoPatient.id) {
           _currentUser = AppUser(
             id: savedPatientId,
             name: savedPatientName ?? 'Patient $savedPatientId',
@@ -106,7 +109,9 @@ class AuthService extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
     await Future.delayed(const Duration(milliseconds: 150));
-    if (patientId != null && patientId.isNotEmpty && patientId != demoPatient.id) {
+    if (patientId != null &&
+        patientId.isNotEmpty &&
+        patientId != demoPatient.id) {
       _currentUser = AppUser(
         id: patientId,
         name: patientName ?? 'Patient $patientId',

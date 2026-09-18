@@ -4,13 +4,16 @@
 // Incomplete rep, overshoot, and visibility loss handling.
 
 import 'dart:math' as math;
+
 import '../../models/enums.dart';
 import '../../models/movement_event.dart';
 import '../../models/reference_profile.dart';
 
 class BicepRepEngine {
-  final double extensionThreshold; // Angle considered fully extended (e.g. 145°-150°)
-  final double overshootMargin; // Degrees beyond (target - tolerance) considered overshoot
+  final double
+  extensionThreshold; // Angle considered fully extended (e.g. 145°-150°)
+  final double
+  overshootMargin; // Degrees beyond (target - tolerance) considered overshoot
 
   RepPhase _phase = RepPhase.idle;
   int _validReps = 0;
@@ -19,10 +22,7 @@ class BicepRepEngine {
   bool _hadOvershootInRep = false;
   IssueCode _lastIssueCode = IssueCode.none;
 
-  BicepRepEngine({
-    this.extensionThreshold = 145.0,
-    this.overshootMargin = 8.0,
-  });
+  BicepRepEngine({this.extensionThreshold = 145.0, this.overshootMargin = 8.0});
 
   RepPhase get phase => _phase;
   int get validReps => _validReps;
@@ -54,7 +54,8 @@ class BicepRepEngine {
 
     final double target = profile.targetAngle;
     final double tol = profile.tolerance;
-    final double peakThreshold = target + tol; // Angle must be <= peakThreshold to accept peak
+    final double peakThreshold =
+        target + tol; // Angle must be <= peakThreshold to accept peak
     final double overshootThreshold = target - tol - overshootMargin;
 
     RepEvent? completedEvent;

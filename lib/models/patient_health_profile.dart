@@ -57,18 +57,18 @@ class PatientHealthProfile {
   }
 
   Map<String, dynamic> toJson() => {
-        'patientId': patientId,
-        'patientName': patientName,
-        'age': age,
-        'conditionNotes': conditionNotes,
-        'affectedBodyPart': affectedBodyPart,
-        'limitations': limitations,
-        'previousHistory': previousHistory,
-        'currentSymptoms': currentSymptoms,
-        'clinicianNotes': clinicianNotes,
-        'assessmentNotes': assessmentNotes,
-        'updatedAt': updatedAt.toIso8601String(),
-      };
+    'patientId': patientId,
+    'patientName': patientName,
+    'age': age,
+    'conditionNotes': conditionNotes,
+    'affectedBodyPart': affectedBodyPart,
+    'limitations': limitations,
+    'previousHistory': previousHistory,
+    'currentSymptoms': currentSymptoms,
+    'clinicianNotes': clinicianNotes,
+    'assessmentNotes': assessmentNotes,
+    'updatedAt': updatedAt.toIso8601String(),
+  };
 
   factory PatientHealthProfile.fromJson(Map<String, dynamic> json) =>
       PatientHealthProfile(

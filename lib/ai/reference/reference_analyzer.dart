@@ -3,6 +3,7 @@
 // 10 FPS sampling, median smoothing (w=5), prominence peak detection, confidence scoring, plausibility rejection.
 
 import 'dart:math' as math;
+
 import '../../models/enums.dart';
 import '../../models/landmark.dart';
 import '../../models/reference_profile.dart';
@@ -48,8 +49,9 @@ class ReferenceAnalyzer {
     final double visibilityRatio = visibleCount / samples.length;
 
     // 2. Filter valid visibility samples
-    final List<AngleSample> validSamples =
-        samples.where((s) => s.visibilityValid).toList();
+    final List<AngleSample> validSamples = samples
+        .where((s) => s.visibilityValid)
+        .toList();
 
     if (validSamples.length < 10) {
       return ReferenceProfile(
@@ -77,8 +79,9 @@ class ReferenceAnalyzer {
       return elapsed >= 1.0;
     }).toList();
 
-    final List<AngleSample> workingSeries =
-        trimmedSamples.length >= 10 ? trimmedSamples : validSamples;
+    final List<AngleSample> workingSeries = trimmedSamples.length >= 10
+        ? trimmedSamples
+        : validSamples;
 
     // 4. Median Smoothing (Window size = 5)
     final List<double> smoothedAngles = _applyMovingMedian(
@@ -101,9 +104,9 @@ class ReferenceAnalyzer {
       final double windowMin = peakAngle - peakWindowDegrees;
       final double windowMax = peakAngle + peakWindowDegrees;
 
-      final windowSamples = smoothedAngles.where(
-        (a) => a >= windowMin && a <= windowMax,
-      ).toList();
+      final windowSamples = smoothedAngles
+          .where((a) => a >= windowMin && a <= windowMax)
+          .toList();
 
       if (windowSamples.length >= minSamplesInPeakWindow) {
         windowSamples.sort();
@@ -152,7 +155,8 @@ class ReferenceAnalyzer {
     if (validPeakAngles.length >= 2) {
       final double mean =
           validPeakAngles.reduce((a, b) => a + b) / validPeakAngles.length;
-      final double variance = validPeakAngles
+      final double variance =
+          validPeakAngles
               .map((a) => math.pow(a - mean, 2))
               .reduce((a, b) => a + b) /
           validPeakAngles.length;
@@ -169,12 +173,13 @@ class ReferenceAnalyzer {
     // Plausibility weight: 0.15
     final double wPlausibility = (isPlausible ? 1.0 : 0.0) * 0.15;
 
-    final double totalConfidence = (wVisibility +
-            wSampleCount +
-            wCompleteness +
-            wStability +
-            wPlausibility)
-        .clamp(0.0, 1.0);
+    final double totalConfidence =
+        (wVisibility +
+                wSampleCount +
+                wCompleteness +
+                wStability +
+                wPlausibility)
+            .clamp(0.0, 1.0);
 
     // Routing Prompt (Section 16)
     String prompt;
@@ -261,15 +266,17 @@ class ReferenceAnalyzer {
           if (angles[r] > rightMax) rightMax = angles[r];
         }
 
-        final double currentProminence =
-            math.min(leftMax - curr, rightMax - curr);
+        final double currentProminence = math.min(
+          leftMax - curr,
+          rightMax - curr,
+        );
 
         if (currentProminence >= prominence) {
           // Check separation from last detected peak
           if (peaks.isNotEmpty) {
             final int lastIdx = peaks.last;
-            final double elapsed = samples[i]
-                    .timestamp
+            final double elapsed =
+                samples[i].timestamp
                     .difference(samples[lastIdx].timestamp)
                     .inMilliseconds /
                 1000.0;

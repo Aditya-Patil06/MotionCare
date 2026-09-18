@@ -5,16 +5,26 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   // MotionCare Visual Reference Brand Colors (Images 1 & 2)
-  static const Color primaryGreen = Color(0xFF319F78); // MotionCare signature emerald/teal green
-  static const Color primaryTeal = Color(0xFF319F78); // Backward-compatible alias
+  static const Color primaryGreen = Color(
+    0xFF319F78,
+  ); // MotionCare signature emerald/teal green
+  static const Color primaryTeal = Color(
+    0xFF319F78,
+  ); // Backward-compatible alias
   static const Color primaryAccent = Color(0xFF45B58E);
 
-  static const Color darkText = Color(0xFF18181B); // Deep neutral black for headings
+  static const Color darkText = Color(
+    0xFF18181B,
+  ); // Deep neutral black for headings
   static const Color textMuted = Color(0xFF6B7280); // Secondary gray
-  static const Color textSubtle = Color(0xFF9CA3AF); // Tagline and placeholder gray
+  static const Color textSubtle = Color(
+    0xFF9CA3AF,
+  ); // Tagline and placeholder gray
 
   static const Color backgroundWhite = Color(0xFFFFFFFF);
-  static const Color surfaceGray = Color(0xFFF3F4F6); // Soft fill for inputs & chips
+  static const Color surfaceGray = Color(
+    0xFFF3F4F6,
+  ); // Soft fill for inputs & chips
   static const Color cardBorder = Color(0xFFE5E7EB); // Hairline border
   static const Color inactiveTrack = Color(0xFFF1F3F5); // Switcher track
   static const Color pauseButtonBg = Color(0xFFEEF0F2); // Soft pause button
@@ -80,16 +90,16 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(28),
           ),
-          textStyle: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-          ),
+          textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: surfaceGray,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 18,
+          vertical: 16,
+        ),
         hintStyle: const TextStyle(color: textSubtle, fontSize: 14),
         labelStyle: const TextStyle(color: textMuted, fontSize: 14),
         border: OutlineInputBorder(

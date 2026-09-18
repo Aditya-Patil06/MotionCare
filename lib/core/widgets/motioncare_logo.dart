@@ -1,5 +1,6 @@
 // lib/core/widgets/motioncare_logo.dart
 import 'package:flutter/material.dart';
+
 import '../theme.dart';
 
 class MotionCareLogo extends StatelessWidget {

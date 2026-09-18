@@ -2,10 +2,12 @@
 // Specification v7 Section 15, 16, 29: Exercise Plan Creation & AI Reference Analysis
 
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
+
 import '../../core/theme.dart';
 import '../../exercises/bicep_curl/bicep_curl_rule.dart';
 import '../../exercises/shoulder_raise/shoulder_raise_rule.dart';
@@ -37,8 +39,9 @@ class _CreatePlanScreenState extends State<CreatePlanScreen> {
   ReferenceProfile? _extractedProfile;
   bool _isManualOverrideActive = false;
   double _manualOverrideAngle = 45.0;
-  final TextEditingController _overrideController =
-      TextEditingController(text: '45.0');
+  final TextEditingController _overrideController = TextEditingController(
+    text: '45.0',
+  );
 
   final BicepCurlRule _bicepRule = BicepCurlRule();
   final ShoulderRaiseRule _shoulderRule = ShoulderRaiseRule();
@@ -67,7 +70,7 @@ class _CreatePlanScreenState extends State<CreatePlanScreen> {
     final double target = _isManualOverrideActive
         ? _manualOverrideAngle
         : (_extractedProfile?.targetAngle ??
-            (_selectedExercise == 'bicep_curl' ? 42.0 : 80.0));
+              (_selectedExercise == 'bicep_curl' ? 42.0 : 80.0));
     final double tol = _extractedProfile?.tolerance ?? 12.0;
 
     try {
@@ -76,7 +79,9 @@ class _CreatePlanScreenState extends State<CreatePlanScreen> {
         MaterialPageRoute(
           builder: (_) => DoctorRecordVideoScreen(
             exerciseId: _selectedExercise,
-            exerciseName: _selectedExercise == 'bicep_curl' ? 'Bicep Curl' : 'Shoulder Raise',
+            exerciseName: _selectedExercise == 'bicep_curl'
+                ? 'Bicep Curl'
+                : 'Shoulder Raise',
             bodySide: _selectedSide,
             targetAngle: target,
             tolerance: tol,
@@ -89,26 +94,22 @@ class _CreatePlanScreenState extends State<CreatePlanScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Camera recorder error: $e')),
-        );
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Camera recorder error: $e')));
       }
     }
   }
 
   Future<void> _attachVideo() async {
     try {
-      final XFile? video = await _picker.pickVideo(
-        source: ImageSource.gallery,
-      );
+      final XFile? video = await _picker.pickVideo(source: ImageSource.gallery);
       if (video != null) {
         await _loadVideoFile(video.path, 'Attached: ${video.name}');
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gallery pick error: $e')),
-        );
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Gallery pick error: $e')));
       }
     }
   }
@@ -160,17 +161,54 @@ class _CreatePlanScreenState extends State<CreatePlanScreen> {
     if (_selectedExercise == 'bicep_curl') {
       // Deterministic realistic 3-curl reference series from clinician
       final angles = [
-        160.0, 160.0, 160.0, 160.0, 160.0, 160.0, 160.0, 160.0, 160.0, 160.0,
-        150.0, 120.0, 80.0, 42.0, 42.0, 43.0, 80.0, 130.0, 160.0, 160.0,
-        150.0, 115.0, 75.0, 44.0, 44.0, 45.0, 85.0, 135.0, 160.0, 160.0,
-        145.0, 110.0, 70.0, 43.0, 43.0, 44.0, 90.0, 140.0, 160.0,
+        160.0,
+        160.0,
+        160.0,
+        160.0,
+        160.0,
+        160.0,
+        160.0,
+        160.0,
+        160.0,
+        160.0,
+        150.0,
+        120.0,
+        80.0,
+        42.0,
+        42.0,
+        43.0,
+        80.0,
+        130.0,
+        160.0,
+        160.0,
+        150.0,
+        115.0,
+        75.0,
+        44.0,
+        44.0,
+        45.0,
+        85.0,
+        135.0,
+        160.0,
+        160.0,
+        145.0,
+        110.0,
+        70.0,
+        43.0,
+        43.0,
+        44.0,
+        90.0,
+        140.0,
+        160.0,
       ];
       for (int i = 0; i < angles.length; i++) {
-        samples.add(AngleSample(
-          timestamp: now.add(Duration(milliseconds: i * 100)),
-          angle: angles[i],
-          visibilityValid: true,
-        ));
+        samples.add(
+          AngleSample(
+            timestamp: now.add(Duration(milliseconds: i * 100)),
+            angle: angles[i],
+            visibilityValid: true,
+          ),
+        );
       }
       final profile = _bicepRule.analyzeReference(
         samples,
@@ -185,15 +223,35 @@ class _CreatePlanScreenState extends State<CreatePlanScreen> {
     } else {
       // Shoulder Raise Hold reference
       final angles = [
-        0.0, 20.0, 45.0, 75.0, 88.0, 90.0, 90.0, 91.0, 89.0, 90.0,
-        90.0, 91.0, 90.0, 90.0, 89.0, 90.0, 90.0, 90.0, 91.0, 90.0,
+        0.0,
+        20.0,
+        45.0,
+        75.0,
+        88.0,
+        90.0,
+        90.0,
+        91.0,
+        89.0,
+        90.0,
+        90.0,
+        91.0,
+        90.0,
+        90.0,
+        89.0,
+        90.0,
+        90.0,
+        90.0,
+        91.0,
+        90.0,
       ];
       for (int i = 0; i < angles.length; i++) {
-        samples.add(AngleSample(
-          timestamp: now.add(Duration(milliseconds: i * 100)),
-          angle: angles[i],
-          visibilityValid: true,
-        ));
+        samples.add(
+          AngleSample(
+            timestamp: now.add(Duration(milliseconds: i * 100)),
+            angle: angles[i],
+            visibilityValid: true,
+          ),
+        );
       }
       final profile = _shoulderRule.analyzeReference(
         samples,
@@ -227,8 +285,9 @@ class _CreatePlanScreenState extends State<CreatePlanScreen> {
       extractedTargetAngle: _extractedProfile!.targetAngle,
       extractedAngleTolerance: _extractedProfile!.tolerance,
       extractionConfidence: _extractedProfile!.confidence,
-      manualOverrideAngle:
-          _isManualOverrideActive ? _manualOverrideAngle : null,
+      manualOverrideAngle: _isManualOverrideActive
+          ? _manualOverrideAngle
+          : null,
       bodySide: _selectedSide,
       reps: _prescribedReps,
       sets: _prescribedSets,
@@ -241,7 +300,9 @@ class _CreatePlanScreenState extends State<CreatePlanScreen> {
     await firestore.savePlan(plan);
 
     if (mounted) {
-      final patientName = firestore.getHealthProfile(_targetPatientId)?.patientName ?? _targetPatientId;
+      final patientName =
+          firestore.getHealthProfile(_targetPatientId)?.patientName ??
+          _targetPatientId;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -260,9 +321,7 @@ class _CreatePlanScreenState extends State<CreatePlanScreen> {
     final targetPatient = firestore.getHealthProfile(_targetPatientId);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Create Exercise Plan'),
-      ),
+      appBar: AppBar(title: const Text('Create Exercise Plan')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -281,7 +340,10 @@ class _CreatePlanScreenState extends State<CreatePlanScreen> {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: AppTheme.primaryTeal.withOpacity(0.15),
                     borderRadius: BorderRadius.circular(6),
@@ -307,22 +369,37 @@ class _CreatePlanScreenState extends State<CreatePlanScreen> {
               ),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
-                  value: firestore.allPatients.any((p) => p.patientId == _targetPatientId)
+                  value:
+                      firestore.allPatients.any(
+                        (p) => p.patientId == _targetPatientId,
+                      )
                       ? _targetPatientId
-                      : (firestore.allPatients.isNotEmpty ? firestore.allPatients.first.patientId : null),
+                      : (firestore.allPatients.isNotEmpty
+                            ? firestore.allPatients.first.patientId
+                            : null),
                   isExpanded: true,
                   dropdownColor: AppTheme.cardBg,
-                  icon: const Icon(Icons.arrow_drop_down, color: AppTheme.primaryTeal),
+                  icon: const Icon(
+                    Icons.arrow_drop_down,
+                    color: AppTheme.primaryTeal,
+                  ),
                   items: firestore.allPatients.map((p) {
                     return DropdownMenuItem<String>(
                       value: p.patientId,
                       child: Row(
                         children: [
-                          const Icon(Icons.person, size: 18, color: AppTheme.primaryAccent),
+                          const Icon(
+                            Icons.person,
+                            size: 18,
+                            color: AppTheme.primaryAccent,
+                          ),
                           const SizedBox(width: 10),
                           Text(
                             '${p.patientName} (${p.affectedBodyPart})',
-                            style: const TextStyle(color: AppTheme.textLight, fontSize: 13),
+                            style: const TextStyle(
+                              color: AppTheme.textLight,
+                              fontSize: 13,
+                            ),
                           ),
                         ],
                       ),
@@ -434,10 +511,12 @@ class _CreatePlanScreenState extends State<CreatePlanScreen> {
                             value: _prescribedReps,
                             dropdownColor: AppTheme.cardBg,
                             items: [5, 8, 10, 12, 15]
-                                .map((e) => DropdownMenuItem(
-                                      value: e,
-                                      child: Text('$e reps'),
-                                    ))
+                                .map(
+                                  (e) => DropdownMenuItem(
+                                    value: e,
+                                    child: Text('$e reps'),
+                                  ),
+                                )
                                 .toList(),
                             onChanged: (val) {
                               if (val != null) {
@@ -456,10 +535,12 @@ class _CreatePlanScreenState extends State<CreatePlanScreen> {
                             value: _prescribedSets,
                             dropdownColor: AppTheme.cardBg,
                             items: [1, 2, 3, 4]
-                                .map((e) => DropdownMenuItem(
-                                      value: e,
-                                      child: Text('$e sets'),
-                                    ))
+                                .map(
+                                  (e) => DropdownMenuItem(
+                                    value: e,
+                                    child: Text('$e sets'),
+                                  ),
+                                )
                                 .toList(),
                             onChanged: (val) {
                               if (val != null) {
@@ -478,10 +559,12 @@ class _CreatePlanScreenState extends State<CreatePlanScreen> {
                             value: _holdDurationSeconds,
                             dropdownColor: AppTheme.cardBg,
                             items: [30.0, 45.0, 60.0, 90.0]
-                                .map((e) => DropdownMenuItem(
-                                      value: e,
-                                      child: Text('${e.toInt()} seconds'),
-                                    ))
+                                .map(
+                                  (e) => DropdownMenuItem(
+                                    value: e,
+                                    child: Text('${e.toInt()} seconds'),
+                                  ),
+                                )
                                 .toList(),
                             onChanged: (val) {
                               if (val != null) {
@@ -526,26 +609,41 @@ class _CreatePlanScreenState extends State<CreatePlanScreen> {
                         Expanded(
                           child: ElevatedButton.icon(
                             icon: const Icon(Icons.videocam_rounded, size: 18),
-                            label: const Text('Record Video', style: TextStyle(fontSize: 13)),
+                            label: const Text(
+                              'Record Video',
+                              style: TextStyle(fontSize: 13),
+                            ),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppTheme.primaryTeal,
                               foregroundColor: AppTheme.darkBg,
                               padding: const EdgeInsets.symmetric(vertical: 12),
                             ),
-                            onPressed: _isAnalyzingReference ? null : _recordVideo,
+                            onPressed: _isAnalyzingReference
+                                ? null
+                                : _recordVideo,
                           ),
                         ),
                         const SizedBox(width: 10),
                         Expanded(
                           child: OutlinedButton.icon(
-                            icon: const Icon(Icons.video_library_rounded, size: 18),
-                            label: const Text('Attach Video', style: TextStyle(fontSize: 13)),
+                            icon: const Icon(
+                              Icons.video_library_rounded,
+                              size: 18,
+                            ),
+                            label: const Text(
+                              'Attach Video',
+                              style: TextStyle(fontSize: 13),
+                            ),
                             style: OutlinedButton.styleFrom(
                               foregroundColor: AppTheme.primaryTeal,
-                              side: const BorderSide(color: AppTheme.primaryTeal),
+                              side: const BorderSide(
+                                color: AppTheme.primaryTeal,
+                              ),
                               padding: const EdgeInsets.symmetric(vertical: 12),
                             ),
-                            onPressed: _isAnalyzingReference ? null : _attachVideo,
+                            onPressed: _isAnalyzingReference
+                                ? null
+                                : _attachVideo,
                           ),
                         ),
                       ],
@@ -554,8 +652,13 @@ class _CreatePlanScreenState extends State<CreatePlanScreen> {
                     Center(
                       child: TextButton.icon(
                         icon: const Icon(Icons.play_circle_outline, size: 16),
-                        label: const Text('Use Clinical Pre-loaded Demo Video', style: TextStyle(fontSize: 12)),
-                        onPressed: _isAnalyzingReference ? null : _usePreloadedDemoVideo,
+                        label: const Text(
+                          'Use Clinical Pre-loaded Demo Video',
+                          style: TextStyle(fontSize: 12),
+                        ),
+                        onPressed: _isAnalyzingReference
+                            ? null
+                            : _usePreloadedDemoVideo,
                       ),
                     ),
                     const SizedBox(height: 14),
@@ -574,7 +677,11 @@ class _CreatePlanScreenState extends State<CreatePlanScreen> {
                         children: [
                           Row(
                             children: [
-                              const Icon(Icons.movie_creation_outlined, size: 18, color: AppTheme.primaryTeal),
+                              const Icon(
+                                Icons.movie_creation_outlined,
+                                size: 18,
+                                color: AppTheme.primaryTeal,
+                              ),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
@@ -590,9 +697,14 @@ class _CreatePlanScreenState extends State<CreatePlanScreen> {
                               ),
                               if (_videoPath != null)
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 6,
+                                    vertical: 2,
+                                  ),
                                   decoration: BoxDecoration(
-                                    color: AppTheme.stateCorrect.withOpacity(0.15),
+                                    color: AppTheme.stateCorrect.withOpacity(
+                                      0.15,
+                                    ),
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: const Text(
@@ -606,7 +718,8 @@ class _CreatePlanScreenState extends State<CreatePlanScreen> {
                                 ),
                             ],
                           ),
-                          if (_videoPlayerController != null && _isVideoInitialized) ...[
+                          if (_videoPlayerController != null &&
+                              _isVideoInitialized) ...[
                             const SizedBox(height: 12),
                             ClipRRect(
                               borderRadius: BorderRadius.circular(8),
@@ -614,8 +727,14 @@ class _CreatePlanScreenState extends State<CreatePlanScreen> {
                                 alignment: Alignment.center,
                                 children: [
                                   AspectRatio(
-                                    aspectRatio: _videoPlayerController!.value.aspectRatio > 0
-                                        ? _videoPlayerController!.value.aspectRatio
+                                    aspectRatio:
+                                        _videoPlayerController!
+                                                .value
+                                                .aspectRatio >
+                                            0
+                                        ? _videoPlayerController!
+                                              .value
+                                              .aspectRatio
                                         : 16 / 9,
                                     child: VideoPlayer(_videoPlayerController!),
                                   ),
@@ -652,17 +771,22 @@ class _CreatePlanScreenState extends State<CreatePlanScreen> {
                             ? const SizedBox(
                                 width: 18,
                                 height: 18,
-                                child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.darkBg),
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: AppTheme.darkBg,
+                                ),
                               )
                             : const Icon(Icons.analytics_outlined),
                         label: Text(
                           _isAnalyzingReference
                               ? 'Analyzing Video Biomechanics...'
                               : _extractedProfile == null
-                                  ? 'Analyze Reference Video with AI'
-                                  : 'Re-analyze Reference Video',
+                              ? 'Analyze Reference Video with AI'
+                              : 'Re-analyze Reference Video',
                         ),
-                        onPressed: _isAnalyzingReference ? null : _analyzeReferenceVideo,
+                        onPressed: _isAnalyzingReference
+                            ? null
+                            : _analyzeReferenceVideo,
                       ),
                     ),
 
@@ -696,12 +820,16 @@ class _CreatePlanScreenState extends State<CreatePlanScreen> {
                                 ),
                                 Container(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 4),
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
                                   decoration: BoxDecoration(
-                                    color: (_extractedProfile!.confidence >= 0.70
-                                            ? AppTheme.stateCorrect
-                                            : AppTheme.stateInsufficientVisibility)
-                                        .withOpacity(0.2),
+                                    color:
+                                        (_extractedProfile!.confidence >= 0.70
+                                                ? AppTheme.stateCorrect
+                                                : AppTheme
+                                                      .stateInsufficientVisibility)
+                                            .withOpacity(0.2),
                                     borderRadius: BorderRadius.circular(6),
                                   ),
                                   child: Text(
@@ -709,9 +837,11 @@ class _CreatePlanScreenState extends State<CreatePlanScreen> {
                                     style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold,
-                                      color: _extractedProfile!.confidence >= 0.70
+                                      color:
+                                          _extractedProfile!.confidence >= 0.70
                                           ? AppTheme.stateCorrect
-                                          : AppTheme.stateInsufficientVisibility,
+                                          : AppTheme
+                                                .stateInsufficientVisibility,
                                     ),
                                   ),
                                 ),
@@ -741,7 +871,8 @@ class _CreatePlanScreenState extends State<CreatePlanScreen> {
                               children: [
                                 Checkbox(
                                   value: _isManualOverrideActive,
-                                  activeColor: AppTheme.stateInsufficientVisibility,
+                                  activeColor:
+                                      AppTheme.stateInsufficientVisibility,
                                   onChanged: (val) {
                                     setState(() {
                                       _isManualOverrideActive = val ?? false;
@@ -766,18 +897,20 @@ class _CreatePlanScreenState extends State<CreatePlanScreen> {
                                       .withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(8),
                                   border: Border.all(
-                                      color:
-                                          AppTheme.stateInsufficientVisibility),
+                                    color: AppTheme.stateInsufficientVisibility,
+                                  ),
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     const Row(
                                       children: [
-                                        Icon(Icons.edit,
-                                            size: 16,
-                                            color: AppTheme
-                                                .stateInsufficientVisibility),
+                                        Icon(
+                                          Icons.edit,
+                                          size: 16,
+                                          color: AppTheme
+                                              .stateInsufficientVisibility,
+                                        ),
                                         SizedBox(width: 6),
                                         Text(
                                           'Clinician Override Active',
@@ -798,11 +931,11 @@ class _CreatePlanScreenState extends State<CreatePlanScreen> {
                                           width: 80,
                                           child: TextField(
                                             controller: _overrideController,
-                                            keyboardType:
-                                                TextInputType.number,
+                                            keyboardType: TextInputType.number,
                                             style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold),
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                             decoration: const InputDecoration(
                                               isDense: true,
                                               suffixText: '°',

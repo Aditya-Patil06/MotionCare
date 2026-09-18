@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../core/constants.dart';
 import '../../core/theme.dart';
 import '../../models/enums.dart';
@@ -25,7 +26,10 @@ class PatientDashboard extends StatelessWidget {
 
     final double avgAccuracy = sessions.isEmpty
         ? 0
-        : sessions.map((s) => s.summary.accuracyPercentage).reduce((a, b) => a + b) / sessions.length;
+        : sessions
+                  .map((s) => s.summary.accuracyPercentage)
+                  .reduce((a, b) => a + b) /
+              sessions.length;
 
     return Scaffold(
       appBar: AppBar(
@@ -41,7 +45,8 @@ class PatientDashboard extends StatelessWidget {
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: () async => Future.delayed(const Duration(milliseconds: 300)),
+        onRefresh: () async =>
+            Future.delayed(const Duration(milliseconds: 300)),
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
           child: Column(
@@ -49,7 +54,10 @@ class PatientDashboard extends StatelessWidget {
             children: [
               // 1. Patient Profile Header
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
                 decoration: BoxDecoration(
                   color: AppTheme.cardBg,
                   borderRadius: BorderRadius.circular(16),
@@ -60,7 +68,11 @@ class PatientDashboard extends StatelessWidget {
                     CircleAvatar(
                       radius: 22,
                       backgroundColor: AppTheme.surfaceBg,
-                      child: const Icon(Icons.person_rounded, color: AppTheme.primaryAccent, size: 24),
+                      child: const Icon(
+                        Icons.person_rounded,
+                        color: AppTheme.primaryAccent,
+                        size: 24,
+                      ),
                     ),
                     const SizedBox(width: 14),
                     Expanded(
@@ -79,17 +91,25 @@ class PatientDashboard extends StatelessWidget {
                           const SizedBox(height: 2),
                           const Text(
                             'Clinician: Dr. Sarah Chen, PT, DPT',
-                            style: TextStyle(fontSize: 12, color: AppTheme.textMuted),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppTheme.textMuted,
+                            ),
                           ),
                         ],
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: AppTheme.stateCorrect.withOpacity(0.12),
                         borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: AppTheme.stateCorrect.withOpacity(0.3)),
+                        border: Border.all(
+                          color: AppTheme.stateCorrect.withOpacity(0.3),
+                        ),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -122,7 +142,10 @@ class PatientDashboard extends StatelessWidget {
 
               // 2. Glanceable At-a-Glance Stats Strip
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 14,
+                  horizontal: 8,
+                ),
                 decoration: BoxDecoration(
                   color: AppTheme.surfaceBg,
                   borderRadius: BorderRadius.circular(14),
@@ -142,7 +165,9 @@ class PatientDashboard extends StatelessWidget {
                     Expanded(
                       child: _buildGlanceStat(
                         label: 'ACCURACY',
-                        value: sessions.isEmpty ? '—' : '${avgAccuracy.toStringAsFixed(0)}%',
+                        value: sessions.isEmpty
+                            ? '—'
+                            : '${avgAccuracy.toStringAsFixed(0)}%',
                         unit: 'avg score',
                         valueColor: AppTheme.stateCorrect,
                       ),
@@ -176,7 +201,10 @@ class PatientDashboard extends StatelessWidget {
                   ),
                   Text(
                     '${plans.length} prescribed',
-                    style: const TextStyle(fontSize: 12, color: AppTheme.textMuted),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppTheme.textMuted,
+                    ),
                   ),
                 ],
               ),
@@ -215,7 +243,10 @@ class PatientDashboard extends StatelessWidget {
                   ),
                   Text(
                     '${sessions.length} sessions',
-                    style: const TextStyle(fontSize: 12, color: AppTheme.textMuted),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppTheme.textMuted,
+                    ),
                   ),
                 ],
               ),
@@ -236,70 +267,86 @@ class PatientDashboard extends StatelessWidget {
                   ),
                 )
               else
-                ...sessions.map((s) => Container(
-                      margin: const EdgeInsets.only(bottom: 8),
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                      decoration: BoxDecoration(
-                        color: AppTheme.cardBg,
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: AppTheme.cardBorder),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 38,
-                            height: 38,
-                            decoration: BoxDecoration(
-                              color: AppTheme.stateCorrect.withOpacity(0.12),
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: AppTheme.stateCorrect.withOpacity(0.25)),
+                ...sessions.map(
+                  (s) => Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppTheme.cardBg,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: AppTheme.cardBorder),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 38,
+                          height: 38,
+                          decoration: BoxDecoration(
+                            color: AppTheme.stateCorrect.withOpacity(0.12),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: AppTheme.stateCorrect.withOpacity(0.25),
                             ),
-                            child: Center(
-                              child: Text(
-                                '${s.summary.accuracyPercentage.toStringAsFixed(0)}%',
-                                style: const TextStyle(
-                                  color: AppTheme.stateCorrect,
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 11,
-                                ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              '${s.summary.accuracyPercentage.toStringAsFixed(0)}%',
+                              style: const TextStyle(
+                                color: AppTheme.stateCorrect,
+                                fontWeight: FontWeight.w800,
+                                fontSize: 11,
                               ),
                             ),
                           ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  s.summary.exerciseName,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 14,
-                                    color: AppTheme.textLight,
-                                  ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                s.summary.exerciseName,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                  color: AppTheme.textLight,
                                 ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  s.summary.exerciseType == ExerciseType.rep
-                                      ? '${s.summary.validReps}/${s.summary.targetReps} reps'
-                                      : '${s.summary.correctHoldSeconds.toStringAsFixed(0)}s / ${s.summary.targetHoldSeconds.toStringAsFixed(0)}s hold',
-                                  style: const TextStyle(fontSize: 12, color: AppTheme.textMuted),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                s.summary.exerciseType == ExerciseType.rep
+                                    ? '${s.summary.validReps}/${s.summary.targetReps} reps'
+                                    : '${s.summary.correctHoldSeconds.toStringAsFixed(0)}s / ${s.summary.targetHoldSeconds.toStringAsFixed(0)}s hold',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: AppTheme.textMuted,
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                          Text(
-                            s.summary.createdAt.toString().substring(5, 10),
-                            style: const TextStyle(fontSize: 12, color: AppTheme.textMuted),
+                        ),
+                        Text(
+                          s.summary.createdAt.toString().substring(5, 10),
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: AppTheme.textMuted,
                           ),
-                        ],
-                      ),
-                    )),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               const SizedBox(height: 24),
 
               // 5. Subtle Scope Boundary Note at Footer
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
                   color: AppTheme.surfaceBg,
                   borderRadius: BorderRadius.circular(10),
@@ -308,12 +355,20 @@ class PatientDashboard extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(Icons.info_outline, size: 15, color: AppTheme.primaryTeal),
+                    const Icon(
+                      Icons.info_outline,
+                      size: 15,
+                      color: AppTheme.primaryTeal,
+                    ),
                     const SizedBox(width: 8),
                     const Expanded(
                       child: Text(
                         AppConstants.clinicalScopeBoundaryStatement,
-                        style: TextStyle(fontSize: 11, color: AppTheme.textMuted, height: 1.35),
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: AppTheme.textMuted,
+                          height: 1.35,
+                        ),
                       ),
                     ),
                   ],
@@ -496,7 +551,11 @@ class PatientDashboard extends StatelessWidget {
             const SizedBox(height: 10),
             Row(
               children: [
-                const Icon(Icons.videocam_rounded, size: 14, color: AppTheme.primaryTeal),
+                const Icon(
+                  Icons.videocam_rounded,
+                  size: 14,
+                  color: AppTheme.primaryTeal,
+                ),
                 const SizedBox(width: 6),
                 const Text(
                   'Doctor Video Demonstration Available',
